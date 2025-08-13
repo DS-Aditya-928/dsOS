@@ -1,13 +1,17 @@
-#ifndef dsuart
-#define dsuart
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
 
+#define UART_0 0x3FF40000
+#define UART_1 0x3FF50000
+#define UART_2 0x3FF6E000
+
+template<unsigned int base>
 class UART
 {
 private:
-    static unsigned int uart;
+    //static const unsigned int uart = base;
     static void sendCharW(char x);
 public:
     static void setActive(int);
@@ -16,13 +20,10 @@ public:
     static bool print(int x);
     static bool print(uint32_t x);
     static bool print(char x);
-
-    enum UARTN
-    {
-        UART0,
-        UART1,
-        UART2
-    };
+    static unsigned int available();
+    static char read();
 };
 
-#endif
+using UART0 = UART<UART_0>;
+using UART1 = UART<UART_1>;
+using UART2 = UART<UART_2>;

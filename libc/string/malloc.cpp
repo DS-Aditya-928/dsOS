@@ -59,12 +59,12 @@ void getHeapMD()
     unsigned int heapStart = cMMU::getHeapStart();
     unsigned short heapSize = cMMU::getHeapSize();
     unsigned short numEnt = *(unsigned short*)(heapStart + heapSize - 2);
-    UART::print("Number of heap entries: "); UART::print(numEnt); UART::print("\r\n");
+    UART0::print("Number of heap entries: "); UART0::print(numEnt); UART0::print("\r\n");
     
     for(int i = 1; i <= numEnt; i++)
     {
         heapMD md = *(heapMD*)(heapStart + heapSize - 2 - (i * sizeof(heapMD)));
-        UART::print(md.regAddr);UART::print(" ");UART::print(md.regLength);UART::print("\r\n");
+        UART0::print(md.regAddr);UART0::print(" ");UART0::print(md.regLength);UART0::print("\r\n");
     }
 }
 
@@ -75,7 +75,7 @@ void* operator new(size_t size)
 }
 
 void* operator new[](size_t size)
-{
+{ 
     return malloc(size);
 }
 

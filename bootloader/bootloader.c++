@@ -11,9 +11,9 @@ void testFunc1(void)
     while(true)
 
     {
-        UART::print("1 ");
-        UART::print(x);
-        UART::print("\r\n");
+        UART0::print("1 ");
+        UART0::print(x);
+        UART0::print("\r\n");
         x++;
 
         yield();
@@ -25,9 +25,9 @@ void testFunc2(void)
     int x = 0;
     while(true)
     {
-        UART::print("2 ");
-        UART::print(x);
-        UART::print("\r\n");
+        UART0::print("2 ");
+        UART0::print(x);
+        UART0::print("\r\n");
         x--;
 
         yield();
@@ -39,9 +39,9 @@ void testFunc3(void)
     int x = 0;
     while(true)
     {
-        UART::print("3 ");
-        UART::print(x);
-        UART::print("\r\n");
+        UART0::print("3 ");
+        UART0::print(x);
+        UART0::print("\r\n");
         x +=2;
 
         yield();
@@ -52,11 +52,10 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     WDTRTC::disableBootProtection();
     WDT0::disableBootProtection();
     cMMU::init();
-    UART::setActive(UART::UART0);
-    UART::init();
+    UART0::init();
 
-    UART::print("Kernel loaded!\r\n");
-    UART::print("Compiled on "); UART::print(__DATE__); UART::print(" at "); UART::print(__TIME__); UART::print(".\r\n");
+    UART0::print("Kernel loaded!\r\n");
+    UART0::print("Compiled on "); UART0::print(__DATE__); UART0::print(" at "); UART0::print(__TIME__); UART0::print(".\r\n");
 
     //dsOS::createTask(&testFunc1, 2048);
     //dsOS::createTask(&testFunc2, 2048);
@@ -65,25 +64,9 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
     while(true)
     {
-        while(((*(unsigned int*)(0x3FF4001C) >> 15) & 1) != 0)
+        if(UART0::available())
         {
-
-        }
-        unsigned int status = *(unsigned int*)(0x3FF4001C);
-        int numBytes = status & 0xFF;
-        bool printed = false;
-        while(numBytes != 0)
-        {
-            printed = true;
-            unsigned char c = *(unsigned char*)(0x3FF40000);
-            UART::print((char)c);
-            status = *(unsigned int*)(0x3FF4001C);
-            numBytes = status & 0xFF;
-        }
-       
-        if(printed == true)
-        {
-            UART::print("\r\n");
+            UART0::print(UART0::read());
         }
     }
 }
