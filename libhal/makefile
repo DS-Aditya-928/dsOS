@@ -31,20 +31,20 @@ LIBK_OBJS=$(FREEOBJS:.o=.libhal.o)
 BINARIES=libhal.a
 
 .PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libhal.o .c .s
+.SUFFIXES: .o .libhal.o .cpp .s
 
 all: $(BINARIES)
 
 libhal.a: $(LIBK_OBJS)
 	xtensa-esp32-elf-ar rcs $@ $(LIBK_OBJS)
 
-.c.o:
+.cpp.o:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
-.c.s:
+.cpp.s:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
-.c.libhal.o:
+.cpp.libhal.o:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
 .S.libhal.o:

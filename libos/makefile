@@ -20,7 +20,7 @@ LIBK_OBJS=$(FREEOBJS:.o=.libos.o)
 BINARIES=libos.a
 
 .PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libos.o .c .s
+.SUFFIXES: .o .libos.o .cpp .s
 
 all: $(BINARIES)
 

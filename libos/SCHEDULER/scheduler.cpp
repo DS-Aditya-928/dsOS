@@ -47,9 +47,9 @@ void dsOS::hiddenYield(uint32_t* cRegs)
 bool dsOS::createTask(void (*entry)(void), uint32_t stackSize)
 {
     if(taskCount >= MAX_TASKS) return(false); // Check if we can create more tasks
-
-    taskData[taskCount].isActive = true;
     taskData[taskCount].stackPointer = (uint32_t)malloc(stackSize) + stackSize; // Allocate stack memory
+    if(taskData[taskCount].stackPointer == 0) return(false); // Check if memory allocation was successful
+    taskData[taskCount].isActive = true;
     taskData[taskCount].registers[0] = (uint32_t)entry; // Set entry point
     taskData[taskCount].registers[1] = taskData[taskCount].stackPointer; // Set stack pointer
 
