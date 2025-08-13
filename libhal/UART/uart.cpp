@@ -71,6 +71,14 @@ bool UART::print(const char* x)
     return(true);
 }
 
+
+bool UART::print(char x)
+{
+    sendCharW(x);
+
+    return(true);
+}
+
 bool UART::print(int x)
 {
     int y = x;

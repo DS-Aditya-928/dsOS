@@ -15,6 +15,7 @@ public:
     static bool print(const char* data);
     static bool print(int x);
     static bool print(uint32_t x);
+    static bool print(char x);
 
     enum UARTN
     {

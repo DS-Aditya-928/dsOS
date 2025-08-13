@@ -9,6 +9,7 @@ void testFunc1(void)
 {
     int x = 0;
     while(true)
+
     {
         UART::print("1 ");
         UART::print(x);
@@ -57,13 +58,32 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     UART::print("Kernel loaded!\r\n");
     UART::print("Compiled on "); UART::print(__DATE__); UART::print(" at "); UART::print(__TIME__); UART::print(".\r\n");
 
-    dsOS::createTask(&testFunc1, 2048);
-    dsOS::createTask(&testFunc2, 2048);
-    dsOS::createTask(&testFunc3, 2048);
+    //dsOS::createTask(&testFunc1, 2048);
+    //dsOS::createTask(&testFunc2, 2048);
+    //dsOS::createTask(&testFunc3, 2048);
 
-    dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
+    //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
     while(true)
     {
+        while(((*(unsigned int*)(0x3FF4001C) >> 15) & 1) != 0)
+        {
 
+        }
+        unsigned int status = *(unsigned int*)(0x3FF4001C);
+        int numBytes = status & 0xFF;
+        bool printed = false;
+        while(numBytes != 0)
+        {
+            printed = true;
+            unsigned char c = *(unsigned char*)(0x3FF40000);
+            UART::print((char)c);
+            status = *(unsigned int*)(0x3FF4001C);
+            numBytes = status & 0xFF;
+        }
+       
+        if(printed == true)
+        {
+            UART::print("\r\n");
+        }
     }
 }
