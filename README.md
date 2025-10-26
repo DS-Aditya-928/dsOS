@@ -43,16 +43,16 @@ This project demonstrates OS fundamentals on constrained hardware, with a total 
    ```
    (Note, the MAKEFILE is broken currently. Use this:)
    ```bash
-   xtensa-esp32-elf-g++ bootloader/bootloader.c++ -nostdlib -nostartfiles -mtext-section-literals -Wl,-Tesp32/linker.ld -Ilibhal/include -Ilibc/include -Llibhal -Llibc -lhal -lk -o bootloader.elf
+   xtensa-esp32-elf-g++ os/os.c++ -nostdlib -nostartfiles -mtext-section-literals -Wl,-Tesp32/linker.ld -Ilibhal/include -Ilibc/include -Llibhal -Llibc -lhal -lk -o os.elf
    ```
 3. Convert the .elf to .bin:
    ```bash
-   xtensa-esp32-elf-g++ bootloader/bootloader.c++ -nostdlib -nostartfiles -mtext-section-literals -Wl,-Tesp32/linker.ld -Ilibhal/include -Ilibc/include -Llibhal -Llibc -lhal -lk -o bootloader.elf
+   xtensa-esp32-elf-g++ os/os.c++ -nostdlib -nostartfiles -mtext-section-literals -Wl,-Tesp32/linker.ld -Ilibhal/include -Ilibc/include -Llibhal -Llibc -lhal -lk -o os.elf
    ```
 
 4. Flash to device:
    ```bash
-   esptool.py --chip esp32 --port "PORT HERE" --before default_reset --after hard_reset write_flash 0x1000 bootloader.bin
+   esptool.py --chip esp32 --port "PORT HERE" --before default_reset --after hard_reset write_flash 0x1000 os.bin
    ```
 
 ---
