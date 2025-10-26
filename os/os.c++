@@ -48,7 +48,7 @@ void testFunc3(void)
     }
 }
 extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
-{
+{  
     WDTRTC::disableBootProtection();
     WDT0::disableBootProtection();
     cMMU::init();
@@ -57,16 +57,18 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     UART0::print("Kernel loaded!\r\n");
     UART0::print("Compiled on "); UART0::print(__DATE__); UART0::print(" at "); UART0::print(__TIME__); UART0::print(".\r\n");
 
-    //dsOS::createTask(&testFunc1, 2048);
-    //dsOS::createTask(&testFunc2, 2048);
-    //dsOS::createTask(&testFunc3, 2048);
+    dsOS::createTask(&testFunc1, 2048);
+    dsOS::createTask(&testFunc2, 2048);
+    dsOS::createTask(&testFunc3, 2048);
 
-    //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
+    dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
     while(true)
     {
+        /*
         if(UART0::available())
         {
-            UART0::print(UART0::read());
+            //UART0::print(UART0::read());
         }
+        */
     }
 }

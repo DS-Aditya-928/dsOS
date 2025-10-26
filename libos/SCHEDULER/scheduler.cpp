@@ -54,7 +54,7 @@ bool dsOS::createTask(void (*entry)(void), uint32_t stackSize)
     taskData[taskCount].registers[1] = taskData[taskCount].stackPointer; // Set stack pointer
 
     taskCount++;
-
+    
     return(true);
 }
 
