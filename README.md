@@ -2,15 +2,15 @@
 
 ## Overview
 **dsOS** is a lightweight operating system built entirely from scratch for the **ESP32 microcontroller**.  
-Unlike most ESP32 projects, dsOS does **not** rely on ESP-IDF or external libraries - it runs fully on **bare metal**.
+dsOS does **not** rely on ESP-IDF or external libraries - it runs fully on **bare metal**.
 
-This project demonstrates OS fundamentals on constrained hardware, with a total footprint of **under 10 KB**.
+This project demonstrates OS fundamentals on constrained hardware, with a total footprint of **3.7 KB**.
 
 ---
 
 ## Features
 - 🧩 **Cooperative Scheduler** – Basic multitasking with a round-robin co-operative scheduler  
-- 🗂️ **Custom Memory Management** – Minimal `malloc` implementation  
+- 🗂️ **Custom Memory Management** –  `malloc` implementation  
 - 🔌 **Peripheral Drivers** – UART, SPI, I2C, and GPIO support  
 - 💻 **Unix-Style Shell** – Command-line interface to test drivers  
 - ⚡ **Lightweight Build** – <10kb binary size
@@ -41,16 +41,10 @@ This project demonstrates OS fundamentals on constrained hardware, with a total 
    ```bash
    make
    ```
-   (Note, the MAKEFILE is broken currently. Use this:)
-   ```bash
-   xtensa-esp32-elf-g++ os/os.c++ -nostdlib -nostartfiles -mtext-section-literals -Wl,-Tesp32/linker.ld -Ilibhal/include -Ilibc/include -Llibhal -Llibc -lhal -lk -o os.elf
-   ```
-3. Convert the .elf to .bin:
-   ```bash
-   xtensa-esp32-elf-g++ os/os.c++ -nostdlib -nostartfiles -mtext-section-literals -Wl,-Tesp32/linker.ld -Ilibhal/include -Ilibc/include -Llibhal -Llibc -lhal -lk -o os.elf
-   ```
 
-4. Flash to device:
+   This will spit out an elf and a bin. The elf is an intermediate, the bin is what's actually flashed.
+
+3. Flash to device:
    ```bash
    esptool.py --chip esp32 --port "PORT HERE" --before default_reset --after hard_reset write_flash 0x1000 os.bin
    ```
@@ -64,7 +58,7 @@ From here, you can test drivers, run commands, and observe task scheduling.
 ---
 
 ## Roadmap
-- [ ] STOP CALLING THE OS A BOOTLOADER (this is a quirk of where the OS resides in memory, it sits where the stage 2 bootloader used to be.)
+- [x] STOP CALLING THE OS A BOOTLOADER (this is a quirk of where the OS resides in memory, it sits where the stage 2 bootloader used to be.)
 - [ ] Add preemptive scheduling option  
 - [ ] Expand shell commands  
 - [ ] Add lightweight filesystem support  
