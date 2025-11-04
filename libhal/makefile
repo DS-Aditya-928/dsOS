@@ -18,6 +18,7 @@ FREEOBJS=\
 UART/uart.o \
 WDT/wdt.o \
 MMU/mmu.o \
+GPIO/gpio.o \
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
