@@ -1,5 +1,4 @@
-#ifndef dsmmu
-#define dsmmu
+#pragma once
 
 typedef struct
 {
@@ -14,5 +13,3 @@ public:
     static unsigned int getHeapStart();
     static unsigned short getHeapSize();
 };
-
-#endif
