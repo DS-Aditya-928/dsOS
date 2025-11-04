@@ -9,7 +9,10 @@
 #define GPIO_ENABLE1_W1TS_REG 0x30
 #define GPIO_ENABLE1_W1TC_REG 0x34 
 
-#define GPIO_OUT_REG 0x04
+#define GPIO_OUT_W1TS_REG 0x08
+#define GPIO_OUT_W1TC_REG 0x0C
+#define GPIO_OUT1_W1TS_REG 0x14
+#define GPIO_OUT1_W1TC_REG 0x18
 
 #define GPIO_IN_REG 0x3C
 #define GPIO_IN2_REG 0x0040
@@ -69,6 +72,33 @@ void GPIO::setMode(uint8_t pin, uint8_t mode)
         else
         {
             *(uint32_t*)(GPIO_BASE + GPIO_ENABLE1_W1TC_REG) = (1 << (pin - 32));
+        }
+    }
+}
+
+void GPIO::write(uint8_t pin, uint8_t state)
+{
+    if(pin < 32)
+    {
+        if(state)
+        {
+            *(uint32_t*)(GPIO_BASE + GPIO_OUT_W1TS_REG) = (1 << pin);
+        }
+        else
+        {
+            *(uint32_t*)(GPIO_BASE + GPIO_OUT_W1TC_REG) = (1 << pin);
+        }
+    }
+
+    else if(pin < 40)
+    {
+        if(state)
+        {
+            *(uint32_t*)(GPIO_BASE + GPIO_OUT1_W1TS_REG) = (1 << (pin - 32));
+        }
+        else
+        {
+            *(uint32_t*)(GPIO_BASE + GPIO_OUT1_W1TC_REG) = (1 << (pin - 32));
         }
     }
 }

@@ -57,16 +57,19 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 
     UART0::print("Kernel loaded!\r\n");
     UART0::print("Compiled on "); UART0::print(__DATE__); UART0::print(" at "); UART0::print(__TIME__); UART0::print(".\r\n");
+    GPIO::setMode(2, 1);
 
     dsOS::createTask(&testFunc1, 2048);
     dsOS::createTask(&testFunc2, 2048);
     dsOS::createTask(&testFunc3, 2048);
-
-    *(uint32_t*)(0x3FF4901C) |= (1 << 9); 
-    *(uint32_t*)(0x3FF49020) |= (1 << 9);
+    UART0::print("\r\n");
     //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
     while(true)
     {
+        GPIO::write(2, 1);
+        for(volatile int i = 0; i < 1000000; i++);
+        GPIO::write(2, 0);
+        for(volatile int i = 0; i < 1000000; i++);
         if(UART0::available())
         {
             if(UART0::read() == 'y')
