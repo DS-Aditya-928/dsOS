@@ -4,7 +4,7 @@
 **dsOS** is a lightweight operating system built entirely from scratch for the **ESP32 microcontroller**.  
 dsOS does **not** rely on ESP-IDF or external libraries - it runs fully on **bare metal**.
 
-This project demonstrates OS fundamentals on constrained hardware, with a total footprint of **3.7 KB**.
+This project demonstrates OS fundamentals on constrained hardware, with a total footprint of **4.3 KB**.
 
 ---
 

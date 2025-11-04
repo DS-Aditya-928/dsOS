@@ -70,35 +70,5 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
         for(volatile int i = 0; i < 1000000; i++);
         GPIO::write(2, 0);
         for(volatile int i = 0; i < 1000000; i++);
-        if(UART0::available())
-        {
-            if(UART0::read() == 'y')
-            {
-                UART0::print("GPIO STATES:\r\n");
-                UART0::print(*(uint32_t*)(0x3FF4402C));
-                UART0::print("\r\n");
-                for(int i = 0; i < 32; i++)
-                {
-                    UART0::print("GPIO ");
-                    UART0::print(i);
-                    UART0::print(": ");
-                    UART0::print((*(uint32_t*)(0x3FF44040) >> i) & 0x1);
-                    UART0::print("\r\n");
-                }
-                for(int i = 0; i < 40; i++)
-                {
-                    UART0::print("GPIO ");
-                    UART0::print(i);
-                    UART0::print(": ");
-                    UART0::print(GPIO::read(i));
-                    UART0::print("\r\n");
-                }                
-                
-                for(int j = 0; j < 12; j++)
-                {
-                    UART0::print("\r\n");
-                }
-            }
-        }
     }
 }
