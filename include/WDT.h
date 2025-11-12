@@ -6,7 +6,7 @@ enum class WDTID
     RTCID
 };
 
-class TimerBase
+class WDTBase
 {
 protected:
     static void HdisableBootProtection(WDTID);
@@ -14,7 +14,7 @@ protected:
 
 
 template<WDTID id>
-class TIMG : public TimerBase
+class WDT : public WDTBase
 {
 public:
     static void disableBootProtection()
@@ -23,6 +23,6 @@ public:
     }
 };
 
-using TIMG0 = TIMG<WDTID::TIMG0>;
-using TIMG1 = TIMG<WDTID::TIMG1>;
-using TIMRTC = TIMG<WDTID::RTCID>;
+using WDT0 = WDT<WDTID::TIMG0>;
+using WDT1 = WDT<WDTID::TIMG1>;
+using WDTRTC = WDT<WDTID::RTCID>;
