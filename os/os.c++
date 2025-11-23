@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <CLOCK.h>
 #include <UART.h>
 #include <WDT.h>
 #include <MMU.h>
