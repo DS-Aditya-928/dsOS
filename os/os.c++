@@ -4,13 +4,13 @@
 #include <WDT.h>
 #include <MMU.h>
 #include <GPIO.h>
+#include <TIME.h>
 #include <OS.h>
 
 void testFunc1(void)
 {
     int x = 0;
     while(true)
-
     {
         UART0::print("1 ");
         UART0::print(x);
@@ -52,6 +52,9 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 {  
     WDTRTC::disableBootProtection();
     WDT0::disableBootProtection();
+
+    Timer::init();
+    
     cMMU::init();
     UART0::init();
 
@@ -67,8 +70,11 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     while(true)
     {
         GPIO::write(2, 1);
-        for(volatile int i = 0; i < 1000000; i++);
+        //Timer::delay(1000);
         GPIO::write(2, 0);
-        for(volatile int i = 0; i < 1000000; i++);
+        //Timer::delay(1000);
+        UART0::print("Time: ");
+        UART0::print((uint32_t)Timer::getTime());
+        UART0::print("\r\n");
     }
 }
