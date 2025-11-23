@@ -3,6 +3,7 @@
 
 class CLOCK_CNTL
 {
+public:
     enum CLK_SRC
     {
         XTL_CLK,//external crystal, 40 MKz for my board but could be as low as 2 MHz.
@@ -14,6 +15,6 @@ class CLOCK_CNTL
         APLL_CLK_2,
     };
 
-    void setCPUClk(CLK_SRC c);
-    uint16_t getAPBf();
+    static void setCPUClk(CLK_SRC c);
+    static uint16_t getAPBf();
 };
