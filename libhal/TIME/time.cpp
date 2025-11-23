@@ -49,8 +49,9 @@
 
 void Timer::init()
 {
-    // Nothing to init for now
     uint32_t cfg = *((uint32_t*)CFG_REG);
+    cfg &= ~(0xFFFF << 13);
+    cfg |= (40 & 0xFFFF) << 13;//note to self: check power mngmt to change apb.page 167
     cfg |= (1 << 31); // Enable timer
     *(uint32_t*)CFG_REG = cfg;
 }
@@ -70,7 +71,7 @@ uint64_t Timer::getTime()
 void Timer::delayMicroseconds(uint64_t us)
 {
     uint64_t start = getTime();
-    uint64_t target = start + us * 80;
+    uint64_t target = start + us * 1;
 
     while(getTime() < target);
 }

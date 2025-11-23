@@ -70,9 +70,9 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     while(true)
     {
         GPIO::write(2, 1);
-        //Timer::delay(1000);
+        Timer::delay(1000);
         GPIO::write(2, 0);
-        //Timer::delay(1000);
+        Timer::delay(1000);
         UART0::print("Time: ");
         UART0::print((uint32_t)Timer::getTime());
         UART0::print("\r\n");
