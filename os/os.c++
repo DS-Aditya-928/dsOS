@@ -60,6 +60,7 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC::PLL_CLK_160);
     //*(uint32_t*)(DPORT_CPU_PER_CONF_REG) = 
     UART0::print(*(uint32_t*)(0x3FF40014) & 0xFFFFF);UART0::print("\r\n");
+    UART0::print((*(uint32_t*)(0x3FF40020) >> 27) & 1);
     UART0::print("Kernel loaded!\r\n");
     UART0::print("Compiled on "); UART0::print(__DATE__); UART0::print(" at "); UART0::print(__TIME__); UART0::print(".\r\n");
     GPIO::setMode(2, 1);

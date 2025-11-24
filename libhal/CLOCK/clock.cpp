@@ -25,10 +25,17 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
             r2 |= 1;
             r1 |= (1 & 0b11) << 27;
             break;
-        case PLL_CLK_240:
-            r2 |= 2;
-            r1 |= (1 & 0b11) << 27;
+        case RC_FAST_CLK:
+            r2 |= 0;
+            r1 |= (2 & 0b11) << 27;
             break;
+        case APLL_CLK_4:
+            r2 |= 0;
+            r1 |= (3 & 0b11) << 27;
+            break;
+        case APLL_CLK_2:
+            r2 |= 1;
+            r1 |= (3 & 0b11) << 27;
     }
 
     *(uint32_t*)(RTC_CNTL_CLK_CONF_REG) = r1;
