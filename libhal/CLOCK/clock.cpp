@@ -17,11 +17,12 @@
 uint32_t CLOCK_CNTL::CPU_FREQ = 40;
 uint32_t CLOCK_CNTL::APB_FREQ = 40;
 volatile int CLOCK_CNTL::numLocks = 0;
+CLOCK_CNTL::CLK_SRC CLOCK_CNTL::baseClock = CLOCK_CNTL::XTL_CLK;
 
 void CLOCK_CNTL::init()
 {
     //default clock is xtal 40 MHz
-    baseClock = XTL_CLK;   
+    baseClock = PLL_CLK_80;   
     setCPUClk(baseClock);
 }
 
@@ -36,7 +37,7 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
         case XTL_CLK:
             r2 |= 0;
             r1 |= (0 & 0b11) << 27;
-            *(uint32_t*)(SYSCON_SYSCLK_CONF_REG) &= 0x3FF;//set divider to 1 i.e 40 MHz when using xtal
+            *(uint32_t*)(SYSCON_SYSCLK_CONF_REG) &= ~(0x3FF);//set divider to 1 i.e 40 MHz when using xtal
             //in this case REFTICK is APB/SYSCON_XTAL_TICK_CONF_REG  so set to 39.
             *(uint32_t*)(SYSCON_XTAL_TICK_CONF_REG) &= ~0xFF;
             *(uint32_t*)(SYSCON_XTAL_TICK_CONF_REG) |= 39;
@@ -58,7 +59,11 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
         case RC_FAST_CLK:
             r2 |= 0;
             r1 |= (2 & 0b11) << 27;
+            //CPU is at 8MHz. APB also at 8 MHz.
+            *(uint32_t*)(SYSCON_CK8M_TICK_CONF_REG) &= ~0xFF;
+            *(uint32_t*)(SYSCON_CK8M_TICK_CONF_REG) |= 7;
             break;
+        /*
         case APLL_CLK_4:
             r2 |= 0;
             r1 |= (3 & 0b11) << 27;
@@ -66,6 +71,7 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
         case APLL_CLK_2:
             r2 |= 1;
             r1 |= (3 & 0b11) << 27;
+            */
     }
 
     *(uint32_t*)(RTC_CNTL_CLK_CONF_REG) = r1;
