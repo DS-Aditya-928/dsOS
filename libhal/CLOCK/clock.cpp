@@ -1,5 +1,5 @@
 #include <CLOCK.h>
-#define XTL_CLK 40000000
+#define XTL_CLK_FREQ 40000000
 
 #define RTC_CNTL_BASE_REG 0x3FF48000
 #define SYSCON_BASE_REG 0x3FF66000
@@ -46,7 +46,7 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
             r1 |= (1 & 0b11) << 27;
             //in this case REFTICK is pulled from APB/ SYSCON_PLL_TICK_CONF_REG so set to 79.
             *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) &= ~0xFF;
-            *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) |= 79
+            *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) |= 79;
             break;
         case PLL_CLK_160:
             r2 |= 1;
