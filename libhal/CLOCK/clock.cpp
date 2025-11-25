@@ -56,6 +56,7 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
             *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) &= ~0xFF;
             *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) |= 79;
             break;
+        /*
         case RC_FAST_CLK:
             r2 |= 0;
             r1 |= (2 & 0b11) << 27;
@@ -63,7 +64,6 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
             *(uint32_t*)(SYSCON_CK8M_TICK_CONF_REG) &= ~0xFF;
             *(uint32_t*)(SYSCON_CK8M_TICK_CONF_REG) |= 7;
             break;
-        /*
         case APLL_CLK_4:
             r2 |= 0;
             r1 |= (3 & 0b11) << 27;
