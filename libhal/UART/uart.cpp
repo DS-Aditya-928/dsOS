@@ -11,12 +11,6 @@
 #define UART_MEM_CNT_STATUS_REG 0x64
 
 template<unsigned int uart>
-void UART<uart>::onClkChange(uint16_t clock)
-{
-    UART0::print("UART Clock changed\r\n");
-}
-
-template<unsigned int uart>
 int UART<uart>::init()
 {
     unsigned int intEnable = *(unsigned int*)(uart + UART_INT_ENA_REG);

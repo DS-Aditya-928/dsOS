@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CLOCK.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -9,12 +8,11 @@
 #define UART_2 0x3FF6E000
 
 template<unsigned int base>
-class UART: public ClkDep
+class UART
 {
 private:
     //static const unsigned int uart = base;
     static void sendCharW(char x);
-    static void onClkChange(uint16_t clock) override;
 public:
     static void setActive(int);
     static int init();
