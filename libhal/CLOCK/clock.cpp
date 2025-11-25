@@ -1,14 +1,29 @@
 #include <CLOCK.h>
+#define XTL_CLK 40000000
 
 #define RTC_CNTL_BASE_REG 0x3FF48000
+#define SYSCON_BASE_REG 0x3FF66000
 
 #define RTC_CNTL_CLK_CONF_REG (RTC_CNTL_BASE_REG + 0x70)
+
+#define SYSCON_SYSCLK_CONF_REG (SYSCON_BASE_REG + 0x00)
+#define SYSCON_XTAL_TICK_CONF_REG (SYSCON_BASE_REG + 0x04)
+#define SYSCON_PLL_TICK_CONF_REG (SYSCON_BASE_REG + 0x08)
+#define SYSCON_CK8M_TICK_CONF_REG (SYSCON_BASE_REG + 0x0C)
+#define SYSCON_APLL_TICK_CONF_REG (SYSCON_BASE_REG + 0x3C)
 
 #define DPORT_CPU_PER_CONF_REG (0x3FF00000 + 0x03C)
 
 uint32_t CLOCK_CNTL::CPU_FREQ = 40;
 uint32_t CLOCK_CNTL::APB_FREQ = 40;
-volatile int CLOCK_CNTL::numLocks;
+volatile int CLOCK_CNTL::numLocks = 0;
+
+void CLOCK_CNTL::init()
+{
+    //default clock is xtal 40 MHz
+    baseClock = XTL_CLK;   
+    setCPUClk(baseClock);
+}
 
 void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
 {
@@ -21,14 +36,24 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
         case XTL_CLK:
             r2 |= 0;
             r1 |= (0 & 0b11) << 27;
+            *(uint32_t*)(SYSCON_SYSCLK_CONF_REG) &= 0x3FF;//set divider to 1 i.e 40 MHz when using xtal
+            //in this case REFTICK is APB/SYSCON_XTAL_TICK_CONF_REG  so set to 39.
+            *(uint32_t*)(SYSCON_XTAL_TICK_CONF_REG) &= ~0xFF;
+            *(uint32_t*)(SYSCON_XTAL_TICK_CONF_REG) |= 39;
             break;
         case PLL_CLK_80:
             r2 |= 0;
             r1 |= (1 & 0b11) << 27;
+            //in this case REFTICK is pulled from APB/ SYSCON_PLL_TICK_CONF_REG so set to 79.
+            *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) &= ~0xFF;
+            *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) |= 79
             break;
         case PLL_CLK_160:
             r2 |= 1;
             r1 |= (1 & 0b11) << 27;
+            //same here
+            *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) &= ~0xFF;
+            *(uint32_t*)(SYSCON_PLL_TICK_CONF_REG) |= 79;
             break;
         case RC_FAST_CLK:
             r2 |= 0;
@@ -45,6 +70,9 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
 
     *(uint32_t*)(RTC_CNTL_CLK_CONF_REG) = r1;
     *(uint32_t*)(DPORT_CPU_PER_CONF_REG) = r2;
+
+    //recinfugyre ref_tick to output 1 MHz
+
 }
 
 void CLOCK_CNTL::getHPClock()

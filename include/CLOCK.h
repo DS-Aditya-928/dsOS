@@ -15,6 +15,7 @@ public:
         APLL_CLK_2,
     };
 
+    static void init();
     static void getHPClock();//requests for APB to be upped tp 80 MHz
     static void releaseHPClock();//done w it, need 2 make sure this is followed :p
     static void setBaseClock(CLK_SRC c);
