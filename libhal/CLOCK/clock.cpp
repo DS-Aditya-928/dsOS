@@ -8,7 +8,10 @@
 
 uint32_t CLOCK_CNTL::CPU_FREQ = 40;
 uint32_t CLOCK_CNTL::APB_FREQ = 40;
-volatile int CLOCK_CNTL::numLocks;
+
+
+volatile int CLOCK_CNTL::numLocks = 0;
+volatile int CLOCK_CNTL::numDeps = 0;
 
 void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
 {
@@ -45,6 +48,11 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
 
     *(uint32_t*)(RTC_CNTL_CLK_CONF_REG) = r1;
     *(uint32_t*)(DPORT_CPU_PER_CONF_REG) = r2;
+
+    for(int i = 0; i < (CLOCK_CNTL::numDeps, __ATOMIC_RELAXED); i++)
+    {
+        CLOCK_CNTL::apbDeps[i]->onClkChange(APB_FREQ);
+    }
 }
 
 void CLOCK_CNTL::getHPClock()

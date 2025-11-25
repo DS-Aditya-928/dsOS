@@ -1,6 +1,17 @@
 #pragma once
 #include <stdint.h>
 
+class ClkDep
+{
+protected:
+    ClkDep()
+    {
+        CLOCK_CNTL::apbDeps[__atomic_fetch_add(&numDeps, 1, __ATOMIC_RELAXED)] = this;
+    }
+
+    virtual void onClkChange(uint16_t clock) = 0;
+};
+
 class CLOCK_CNTL
 {
 public:
@@ -25,4 +36,9 @@ private:
     static CLK_SRC baseClock;
     static void setCPUClk(CLK_SRC c);
     static volatile int numLocks;
+
+protected:
+    friend class ClkDep;
+    static volatile int numDeps;
+    static ClkDep* apbDeps[16];
 };
