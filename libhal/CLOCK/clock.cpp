@@ -22,7 +22,7 @@ CLOCK_CNTL::CLK_SRC CLOCK_CNTL::baseClock = CLOCK_CNTL::XTL_CLK;
 void CLOCK_CNTL::init()
 {
     //default clock is xtal 40 MHz
-    baseClock = PLL_CLK_80;   
+    baseClock = XTL_CLK;   
     setCPUClk(baseClock);
 }
 
