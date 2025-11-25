@@ -19,6 +19,7 @@ UART/uart.o \
 WDT/wdt.o \
 MMU/mmu.o \
 GPIO/gpio.o \
+CLOCK/clock.o
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \

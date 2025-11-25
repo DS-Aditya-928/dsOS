@@ -15,7 +15,7 @@ private:
     static void sendCharW(char x);
 public:
     static void setActive(int);
-    static int init();
+    static int init(uint32_t baudRate);
     static bool print(const char* data);
     static bool print(int x);
     static bool print(uint32_t x);
