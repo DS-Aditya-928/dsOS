@@ -6,19 +6,31 @@
 #define UART_INT_ST_REG 0x8
 #define UART_INT_ENA_REG 0xC
 #define UART_INT_CLR_REG 0x10
+#define UART_CLKDIV_REG 0x14
 #define UART_STATUS_REG 0x1C
+#define UART_CONF0_REG 0x20
 
 #define UART_MEM_CNT_STATUS_REG 0x64
 
 template<unsigned int uart>
-int UART<uart>::init()
+int UART<uart>::init(uint32_t baudRate)
 {
-    unsigned int intEnable = *(unsigned int*)(uart + UART_INT_ENA_REG);
-    intEnable |= (1 << 14);
-   *(unsigned int*)(uart + UART_INT_ENA_REG) = intEnable;
+    uint32_t reg = *(uint32_t*)(uart + UART_INT_ENA_REG);
+    reg |= (1 << 14);
+    *(uint32_t*)(uart + UART_INT_ENA_REG) = reg;
 
-   sendCharW('\r');
-   sendCharW('\n');
+    reg = *(uint32_t*)(uart + UART_CONF0_REG);
+    reg &= ~(1 << 27);//set to use REF_TICK at 1MHz
+    *(uint32_t*)(uart + UART_CONF0_REG) = reg;
+
+    reg = *(uint32_t*)(uart + UART_CLKDIV_REG);
+    reg &= ~(0xFFFFFF);
+    reg |= (1000000 / baudRate);
+    uint8_t fractional = (uint8_t)(((1000000 % baudRate) * 16) / baudRate);
+    reg |= ((fractional & 0b1111) << 20); //fractional to 0.68
+    *(uint32_t*)(uart + UART_CLKDIV_REG) = reg;
+    sendCharW('\r');
+    sendCharW('\n');
     return(0);
 }
 
