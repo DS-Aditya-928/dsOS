@@ -15,6 +15,14 @@ public:
         APLL_CLK_2,
     };
 
+    static void getHPClock();//requests for APB to be upped tp 80 MHz
+    static void releaseHPClock();//done w it, need 2 make sure this is followed :p
+    static void setBaseClock(CLK_SRC c);
+
+private:
+    static uint32_t CPU_FREQ;
+    static uint32_t APB_FREQ;
+    static CLK_SRC baseClock;
     static void setCPUClk(CLK_SRC c);
-    static uint16_t getAPBf();
+    static volatile int numLocks;
 };

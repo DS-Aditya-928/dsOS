@@ -6,6 +6,10 @@
 
 #define DPORT_CPU_PER_CONF_REG (0x3FF00000 + 0x03C)
 
+uint32_t CLOCK_CNTL::CPU_FREQ = 40;
+uint32_t CLOCK_CNTL::APB_FREQ = 40;
+volatile int CLOCK_CNTL::numLocks;
+
 void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
 {
     uint32_t r1 = *(uint32_t*)(RTC_CNTL_CLK_CONF_REG);//RTC_CNTL_SOC_CLK_SEL
@@ -15,6 +19,7 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
     switch(c)
     {
         case XTL_CLK:
+            r2 |= 0;
             r1 |= (0 & 0b11) << 27;
             break;
         case PLL_CLK_80:
@@ -40,4 +45,27 @@ void CLOCK_CNTL::setCPUClk(CLOCK_CNTL::CLK_SRC c)
 
     *(uint32_t*)(RTC_CNTL_CLK_CONF_REG) = r1;
     *(uint32_t*)(DPORT_CPU_PER_CONF_REG) = r2;
+}
+
+void CLOCK_CNTL::getHPClock()
+{
+    if(__atomic_load_n(&numLocks, __ATOMIC_RELAXED) == 0)
+    {
+        //switch to the high freq clock
+        setCPUClk(PLL_CLK_160);//apb is now 80MHz.
+    }
+    __atomic_fetch_add(&numLocks, 1, __ATOMIC_RELAXED);
+}
+
+void CLOCK_CNTL::releaseHPClock()
+{
+    if(__atomic_load_n(&numLocks, __ATOMIC_RELAXED) == 0)//invalid
+    {
+        return;
+    }
+
+    if(__atomic_sub_fetch(&numLocks, 1, __ATOMIC_RELAXED) == 0)
+    {
+        setCPUClk(baseClock);
+    }
 }
