@@ -33,7 +33,7 @@ inline  __attribute__((always_inline)) void yield()
     //1.) Save all the current function's registers
     //2.) Call hiddenYield to save ret point and load second task's registers. hiddenYield will also jump.
     
-    uint32_t regBuf[16]; // Buffer to save registers
+    //uint32_t regBuf[16]; // Buffer to save registers
     /*
     asm volatile (
         "s32i  a0,  %0,  0\n"
@@ -57,6 +57,6 @@ inline  __attribute__((always_inline)) void yield()
         :      
         );
         */
-        dsOS::hiddenYield(regBuf);
+        dsOS::hiddenYield(nullptr);
         //loading in of all of task 2's registers happens in hiddenYield
 }
