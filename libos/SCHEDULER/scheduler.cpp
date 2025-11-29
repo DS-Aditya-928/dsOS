@@ -1,4 +1,5 @@
 #include "OS.h"
+#include "UART.h"
 
 int dsOS::taskCount = 0; // Initialize task count
 int dsOS::curTask = 0; // Initialize current task index
@@ -18,6 +19,7 @@ void dsOS::hiddenYield(uint32_t* cRegs)
     : "memory" // Clobber list: memory
     );
     taskData[curTask].registers[0] -= 0x40000000;
+    //UART0::print(taskData[curTask].registers[0]);
     
     curTask++;
     if(curTask >= taskCount) curTask = 0; // Switch tasks round robin style baybeeeee

@@ -58,4 +58,10 @@ inline  __attribute__((always_inline)) void yield()
         );
         dsOS::hiddenYield(regBuf);
         //loading in of all of task 2's registers happens in hiddenYield
+        asm volatile (
+        "l32i a0,  %0,  0\n"
+        : 
+        : "r"(regBuf)
+        : "memory" // Clobber list: memory
+        );
 }
