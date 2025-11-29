@@ -9,6 +9,7 @@
 struct TaskInfo 
 {
     uint32_t registers[16]; // General-purpose registers
+    uint32_t returnAddress; // Return address
     bool isActive = false;
     uint32_t stackPointer;
 };

@@ -13,11 +13,11 @@ void dsOS::hiddenYield(uint32_t* cRegs)
 
     asm volatile (
     "mov %0, a0\n"
-    : "=r"(taskData[curTask].registers[0])
+    : "=r"(taskData[curTask].returnAddress)
     :
     : "memory" // Clobber list: memory
     );
-    taskData[curTask].registers[0] -= 0x40000000;
+    taskData[curTask].returnAddress -= 0x40000000;
     
     curTask++;
     if(curTask >= taskCount) curTask = 0; // Switch tasks round robin style baybeeeee
@@ -30,6 +30,7 @@ void dsOS::hiddenYield(uint32_t* cRegs)
         "l32i a5,  %0, 20\n"
         "l32i a6,  %0, 24\n"
         "l32i a7,  %0, 28\n"
+        "l32i a8,  %0, 32\n"
         "l32i a9,  %0, 36\n"
         "l32i a10, %0, 40\n"
         "l32i a11, %0, 44\n"
@@ -37,20 +38,21 @@ void dsOS::hiddenYield(uint32_t* cRegs)
         "l32i a13, %0, 52\n"
         "l32i a14, %0, 56\n"
         "l32i a15, %0, 60\n"
-        "jx a0\n" 
+        "jx %1\n" 
         :
-        : "r"(taskData[curTask].registers)
+        : "r"(taskData[curTask].registers), "r"(taskData[curTask].returnAddress)
         :  
         );
 }
 
 bool dsOS::createTask(void (*entry)(void), uint32_t stackSize)
 {
-    if(taskCount >= MAX_TASKS) return(false); // Check if we can create more tasks
+    if(taskCount >= MAX_TASKS) return(false);
     taskData[taskCount].stackPointer = (uint32_t)malloc(stackSize) + stackSize; // Allocate stack memory
     if(taskData[taskCount].stackPointer == 0) return(false); // Check if memory allocation was successful
     taskData[taskCount].isActive = true;
-    taskData[taskCount].registers[0] = (uint32_t)entry; // Set entry point
+    //taskData[taskCount].registers[0] = (uint32_t)entry; // Set entry point
+    taskData[taskCount].returnAddress = (uint32_t)entry; // Set entry point
     taskData[taskCount].registers[1] = taskData[taskCount].stackPointer; // Set stack pointer
 
     taskCount++;
@@ -63,10 +65,10 @@ void dsOS::startScheduler()
     if(taskCount == 0) return; // No tasks to schedule
 
     asm volatile (
-        "l32i a0,  %0,  0\n"
-        "jx a0\n"
+        //"l32i a0,  %0,  0\n"
+        "jx %0\n"
         :
-        : "r"(&taskData[0].registers[0]) // Load the entry point of the first task
+        : "r"(&taskData[0].returnAddress) // Load the entry point of the first task
         :
     );
 }

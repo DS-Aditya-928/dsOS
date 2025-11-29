@@ -68,14 +68,16 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     UART0::print("\r\n");
     UART0::print(*(uint32_t*)(0x3FF40000 + 0x14) & 0xFFFFFF);UART0::print("\r\n");
 
-    //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
-    volatile int x = 0;
+    dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
+    volatile int x = 0; 
     
     while(true)
     {
+        /*
         GPIO::write(2, 1);
         for(volatile int i = 0; i < 1000000; i++);
         GPIO::write(2, 0);
         for(volatile int i = 0; i < 1000000; i++);
+        */
     }
 }
