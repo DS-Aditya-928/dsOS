@@ -7,6 +7,10 @@
 #include <GPIO.h>
 #include <OS.h>
 
+int a = 0;
+int b = 0;
+int c = 0;
+
 void dumbFunc(void)
 {
     yield();
@@ -17,12 +21,11 @@ void testFunc1(void)
 {
     int x = 0;
     while(true)
-
     {
         UART0::print("1 ");
-        UART0::print(x);
+        UART0::print(a++);
         UART0::print("\r\n");
-        x++;
+        //x++;
 
         dumbFunc();
     }
@@ -34,9 +37,9 @@ void testFunc2(void)
     while(true)
     {
         UART0::print("2 ");
-        UART0::print(x);
+        UART0::print(b--);
         UART0::print("\r\n");
-        x--;
+        //x--;
 
         yield();
     }
@@ -48,9 +51,9 @@ void testFunc3(void)
     while(true)
     {
         UART0::print("3 ");
-        UART0::print(x);
+        UART0::print(c);
         UART0::print("\r\n");
-        x +=2;
+        c +=2;
 
         yield();
     }
