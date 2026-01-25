@@ -7,6 +7,12 @@
 #include <GPIO.h>
 #include <OS.h>
 
+int a = 0;
+int b = 0;
+int c = 0;
+
+uint32_t a0Val = 0;
+
 void dumbFunc(void)
 {
     yield();
@@ -17,13 +23,20 @@ void testFunc1(void)
 {
     int x = 0;
     while(true)
-
     {
+        //print a1 stack pointer value
+        uint32_t sp;
+        asm volatile (
+            "mov %0, a1\n"
+            : "=r"(sp)
+            :
+            : 
+        );
         UART0::print("1 ");
         UART0::print(x);
         UART0::print("\r\n");
         x++;
-
+        //yield();
         dumbFunc();
     }
 }
@@ -33,6 +46,13 @@ void testFunc2(void)
     int x = 0;
     while(true)
     {
+        uint32_t sp;
+        asm volatile (
+            "mov %0, a1\n"
+            : "=r"(sp)
+            :
+            : 
+        );
         UART0::print("2 ");
         UART0::print(x);
         UART0::print("\r\n");
@@ -47,6 +67,13 @@ void testFunc3(void)
     int x = 0;
     while(true)
     {
+        uint32_t sp;
+        asm volatile (
+            "mov %0, a1\n"
+            : "=r"(sp)
+            :
+            : 
+        );
         UART0::print("3 ");
         UART0::print(x);
         UART0::print("\r\n");

@@ -3,12 +3,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "string.h"
+#include "UART.h"
 
 #define MAX_TASKS 32
 
 struct TaskInfo 
 {
-    uint32_t registers[16]; // General-purpose registers
+    uint32_t registers[17]; // General-purpose registers. 17 is ret addr
     bool isActive = false;
     uint32_t stackPointer;
 };
@@ -20,7 +21,7 @@ private:
     static int taskCount; // Total number of tasks
     static TaskInfo taskData[MAX_TASKS];
 protected:
-    static void hiddenYield(uint32_t* cRegs);
+    static void hiddenYield();
 
     friend void yield();
 public:
@@ -28,13 +29,22 @@ public:
     static void startScheduler();
 };
 
+extern "C" void hiddenYield();
+extern "C" uint32_t* oldRegisters;
+extern "C" uint32_t* newRegisters;
+
 inline  __attribute__((always_inline)) void yield()
 {
-    /*
-    1.) Save all the current function's registers
-    2.) Call hiddenYield to save ret point and load second task's registers. hiddenYield will also jump.
-    */
-    uint32_t regBuf[16]; // Buffer to save registers
+    //1.) Save all the current function's registers
+    //2.) Call hiddenYield to save ret point and load second task's registers. hiddenYield will also jump.
+    asm volatile (
+        "mov %0, a0\n"
+        : "=r"(dsOS::taskData[dsOS::curTask].registers[16])
+        :
+        : 
+    ); 
+    
+    //uint32_t regBuf[16]; // Buffer to save registers
     asm volatile (
         "s32i  a0,  %0,  0\n"
         "s32i  a1,  %0,  4\n"
@@ -53,15 +63,15 @@ inline  __attribute__((always_inline)) void yield()
         "s32i  a14, %0, 56\n"
         "s32i  a15, %0, 60\n"
         :
-        : "r"(regBuf)             // %0 = C variable regs
+        : "r"(dsOS::taskData[dsOS::curTask].registers)             // %0 = C variable regs
         :      
-        );
-        dsOS::hiddenYield(regBuf);
-        //loading in of all of task 2's registers happens in hiddenYield
-        asm volatile (
-        "l32i a0,  %0,  0\n"
+    );
+    
+    dsOS::hiddenYield();
+    asm volatile (
+        "mov a0, %0\n"
+        :
+        : "r"(dsOS::taskData[dsOS::curTask].registers[16])
         : 
-        : "r"(regBuf)
-        : "memory" // Clobber list: memory
-        );
+    );
 }

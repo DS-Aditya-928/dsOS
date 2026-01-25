@@ -9,7 +9,7 @@ EXEC_PREFIX?=$(PREFIX)
 INCLUDEDIR?=$(PREFIX)/include
 LIBDIR?=$(EXEC_PREFIX)/lib
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mabi=call0
 CPPFLAGS:=$(CPPFLAGS) -Iinclude -I../include
 LIBK_CFLAGS:=$(CFLAGS) -L../libc -Lk
 LIBK_CPPFLAGS:=$(CPPFLAGS)
@@ -37,7 +37,7 @@ BINARIES=libhal.a
 
 all: $(BINARIES)
 
-libhal.a: $(LIBK_OBJS)
+libhal.a: $(LIBK_OBJS) makefile
 	xtensa-esp32-elf-ar rcs $@ $(LIBK_OBJS)
 
 .cpp.o:
