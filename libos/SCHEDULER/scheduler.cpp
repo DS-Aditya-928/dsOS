@@ -5,13 +5,8 @@ int dsOS::taskCount = 0; // Initialize task count
 int dsOS::curTask = 0; // Initialize current task index
 TaskInfo dsOS::taskData[MAX_TASKS];
 
-void dsOS::hiddenYield(uint32_t* cRegs)
+void dsOS::hiddenYield()
 {
-    for(int i = 0; i < 16; i++)
-    {
-        taskData[curTask].registers[i] = cRegs[i]; // Save current task's registers
-    }
-
     asm volatile (
     "mov %0, a0\n"
     : "=r"(taskData[curTask].registers[0])

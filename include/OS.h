@@ -21,7 +21,7 @@ private:
     static int taskCount; // Total number of tasks
     static TaskInfo taskData[MAX_TASKS];
 protected:
-    static void hiddenYield(uint32_t* cRegs);
+    static void hiddenYield();
 
     friend void yield();
 public:
@@ -33,7 +33,14 @@ inline  __attribute__((always_inline)) void yield()
 {
     //1.) Save all the current function's registers
     //2.) Call hiddenYield to save ret point and load second task's registers. hiddenYield will also jump.
-    uint32_t regBuf[16]; // Buffer to save registers
+    asm volatile (
+        "mov %0, a0\n"
+        : "=r"(dsOS::taskData[dsOS::curTask].registers[16])
+        :
+        : 
+    ); 
+    
+    //uint32_t regBuf[16]; // Buffer to save registers
     asm volatile (
         "s32i  a0,  %0,  0\n"
         "s32i  a1,  %0,  4\n"
@@ -52,8 +59,15 @@ inline  __attribute__((always_inline)) void yield()
         "s32i  a14, %0, 56\n"
         "s32i  a15, %0, 60\n"
         :
-        : "r"(regBuf)             // %0 = C variable regs
+        : "r"(dsOS::taskData[dsOS::curTask].registers)             // %0 = C variable regs
         :      
         );
-        dsOS::hiddenYield(regBuf);
+        dsOS::hiddenYield();
+    
+        asm volatile (
+        "mov a0, %0\n"
+        :
+        : "r"(dsOS::taskData[dsOS::curTask].registers[16])
+        : 
+    );
 }

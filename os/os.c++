@@ -16,21 +16,9 @@ uint32_t a0Val = 0;
 void dumbFunc(void)
 {
     //save a0 value
-    asm volatile (
-        "mov %0, a0\n"
-        : "=r"(a0Val)
-        :
-        : 
-    ); 
     yield();
     UART0::print("Dumb Func\r\n");
     //restore a0 value
-    asm volatile (
-        "mov a0, %0\n"
-        :
-        : "r"(a0Val)
-        : 
-    );
 }
 
 void testFunc1(void)
