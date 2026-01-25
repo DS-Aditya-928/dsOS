@@ -1,12 +1,13 @@
 CFLAGS?=-g
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0
 CPPFLAGS:=$(CPPFLAGS) -Iinclude -I../include
 LIBK_CFLAGS:=$(CFLAGS) -L../libc -Lk
 LIBK_CPPFLAGS:=$(CPPFLAGS)
 
 FREEOBJS=\
 SCHEDULER/scheduler.o \
+#SCHEDULER/yield.o \
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
@@ -20,11 +21,11 @@ LIBK_OBJS=$(FREEOBJS:.o=.libos.o)
 BINARIES=libos.a
 
 .PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libos.o .cpp .s
+.SUFFIXES: .o .libos.o .cpp .s .S
 
 all: $(BINARIES)
 
-libos.a: $(LIBK_OBJS)
+libos.a: $(LIBK_OBJS) makefile
 	xtensa-esp32-elf-ar rcs $@ $(LIBK_OBJS)
 
 .cpp.o:
@@ -38,6 +39,8 @@ libos.a: $(LIBK_OBJS)
 
 .S.libos.o:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+.S.o:
+	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 clean:
 	rm -f $(BINARIES) *.a

@@ -7,7 +7,7 @@ OS_SRCS = os/os.c++
 
 TARGET = os.elf
 TARGET_BIN = os.bin
-CXXFLAGS = -mtext-section-literals -fno-exceptions -fno-builtin
+CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin
 
 INCLUDES = -Iinclude
 

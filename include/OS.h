@@ -29,6 +29,10 @@ public:
     static void startScheduler();
 };
 
+extern "C" void hiddenYield();
+extern "C" uint32_t* oldRegisters;
+extern "C" uint32_t* newRegisters;
+
 inline  __attribute__((always_inline)) void yield()
 {
     //1.) Save all the current function's registers
@@ -62,9 +66,26 @@ inline  __attribute__((always_inline)) void yield()
         : "r"(dsOS::taskData[dsOS::curTask].registers)             // %0 = C variable regs
         :      
         );
-        dsOS::hiddenYield();
     
-        asm volatile (
+    /*
+    UART0::print("Yielding from task ");
+    UART0::print(dsOS::curTask);
+    UART0::print("\r\n");
+    /*
+    oldRegisters = dsOS::taskData[dsOS::curTask].registers;
+    dsOS::curTask++;
+    if(dsOS::curTask >= dsOS::taskCount) dsOS::curTask = 0; // Switch tasks round robin style baybeeeee
+    newRegisters = dsOS::taskData[dsOS::curTask].registers;
+    */
+    dsOS::hiddenYield();
+
+    /*
+    UART0::print("Returned to task ");
+    UART0::print(dsOS::curTask);
+    UART0::print("\r\n");
+    */
+
+    asm volatile (
         "mov a0, %0\n"
         :
         : "r"(dsOS::taskData[dsOS::curTask].registers[16])

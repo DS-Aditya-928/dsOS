@@ -5,6 +5,10 @@ int dsOS::taskCount = 0; // Initialize task count
 int dsOS::curTask = 0; // Initialize current task index
 TaskInfo dsOS::taskData[MAX_TASKS];
 
+uint32_t* oldRegisters = nullptr;
+uint32_t* newRegisters = nullptr;
+uint32_t yieldJumpAddr = 0;
+
 void dsOS::hiddenYield()
 {
     asm volatile (
@@ -13,10 +17,11 @@ void dsOS::hiddenYield()
     :
     : "memory" // Clobber list: memory
     );
-    taskData[curTask].registers[0] -= 0x40000000;
+    //taskData[curTask].registers[0] -= 0x40000000;
     
     curTask++;
     if(curTask >= taskCount) curTask = 0; // Switch tasks round robin style baybeeeee
+    
     asm volatile (
         "l32i a0,  %0,  0\n"
         "l32i a1,  %0,  4\n"
@@ -26,7 +31,7 @@ void dsOS::hiddenYield()
         "l32i a5,  %0, 20\n"
         "l32i a6,  %0, 24\n"
         "l32i a7,  %0, 28\n"
-        "l32i a9,  %0, 36\n"
+        "l32i a8,  %0, 32\n"
         "l32i a10, %0, 40\n"
         "l32i a11, %0, 44\n"
         "l32i a12, %0, 48\n"

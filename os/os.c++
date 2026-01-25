@@ -15,10 +15,8 @@ uint32_t a0Val = 0;
 
 void dumbFunc(void)
 {
-    //save a0 value
     yield();
     UART0::print("Dumb Func\r\n");
-    //restore a0 value
 }
 
 void testFunc1(void)
@@ -26,10 +24,18 @@ void testFunc1(void)
     int x = 0;
     while(true)
     {
+        //print a1 stack pointer value
+        uint32_t sp;
+        asm volatile (
+            "mov %0, a1\n"
+            : "=r"(sp)
+            :
+            : 
+        );
         UART0::print("1 ");
-        UART0::print(a++);
+        UART0::print(x);
         UART0::print("\r\n");
-        //x++;
+        x++;
         //yield();
         dumbFunc();
     }
@@ -40,10 +46,17 @@ void testFunc2(void)
     int x = 0;
     while(true)
     {
+        uint32_t sp;
+        asm volatile (
+            "mov %0, a1\n"
+            : "=r"(sp)
+            :
+            : 
+        );
         UART0::print("2 ");
-        UART0::print(b--);
+        UART0::print(x);
         UART0::print("\r\n");
-        //x--;
+        x--;
 
         yield();
     }
@@ -54,10 +67,17 @@ void testFunc3(void)
     int x = 0;
     while(true)
     {
+        uint32_t sp;
+        asm volatile (
+            "mov %0, a1\n"
+            : "=r"(sp)
+            :
+            : 
+        );
         UART0::print("3 ");
-        UART0::print(c);
+        UART0::print(x);
         UART0::print("\r\n");
-        c +=2;
+        x +=2;
 
         yield();
     }
