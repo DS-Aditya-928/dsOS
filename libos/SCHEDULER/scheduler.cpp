@@ -15,10 +15,9 @@ void dsOS::hiddenYield()
     "mov %0, a0\n"
     : "=r"(taskData[curTask].registers[0])
     :
-    : "memory" // Clobber list: memory
+    : "memory"
     );
-    //taskData[curTask].registers[0] -= 0x40000000;
-    
+
     curTask++;
     if(curTask >= taskCount) curTask = 0; // Switch tasks round robin style baybeeeee
     
@@ -38,6 +37,7 @@ void dsOS::hiddenYield()
         "l32i a13, %0, 52\n"
         "l32i a14, %0, 56\n"
         "l32i a15, %0, 60\n"
+        "l32i a9,  %0, 36\n"
         "jx a0\n" 
         :
         : "r"(taskData[curTask].registers)
