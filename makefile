@@ -5,9 +5,10 @@ MAKEFILE = makefile
 
 OS_SRCS = os/os.c++
 
-TARGET = os.elf
-TARGET_BIN = os.bin
-CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin
+OS_NAME = dsOS2
+TARGET = $(OS_NAME).elf
+TARGET_BIN = $(OS_NAME).bin
+CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin -nostdlib
 
 INCLUDES = -Iinclude
 
@@ -37,6 +38,16 @@ $(TARGET): $(OS_SRCS) build_libs $(MAKEFILE)
 	$(CONVERT) --chip $(CHIP) elf2image --flash_mode=$(FLASH_MODE) --flash_freq=$(FLASH_FREQ) --flash_size=$(FLASH_SIZE) -o $(TARGET_BIN) $(TARGET)
 	$(DISASM) $(DISASM_FLAGS) $(TARGET) > $(TARGET).disasm
 
-clean:
-	rm -f $(TARGET) *.o
-	rm -f $(TARGET_BIN)
+clean-libs:
+	@for lib in $(LIBS_PATHS); do \
+		echo "Removing $$lib..."; \
+		make -C $$(dirname $$lib) clean;\
+	done
+
+clean-main:
+	rm -f *.o *.bin *.elf *.disasm
+
+clean: clean-libs clean-main $(TARGET)
+
+flash: $(TARGET)
+	powershell.exe -Command "esptool -p $(PORT) --before default-reset --after hard-reset write-flash 0x1000 $$(wslpath -w ~/esp32OS/$(TARGET_BIN))"

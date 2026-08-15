@@ -2,18 +2,17 @@
 
 ## Overview
 **dsOS** is a lightweight operating system built entirely from scratch for the **ESP32 microcontroller**.  
-dsOS does **not** rely on ESP-IDF or external libraries - it runs fully on **bare metal**.
+dsOS does not rely on ESP-IDF or even stdlib, I built/am building that stuff myself.
 
-This project demonstrates OS fundamentals on constrained hardware, with a total footprint of **4.3 KB**.
+This project demonstrates OS fundamentals on constrained hardware, with a total footprint of **5.9 KB**.
 
 ---
 
 ## Features
-- 🧩 **Cooperative Scheduler** – Basic multitasking with a round-robin co-operative scheduler  
-- 🗂️ **Custom Memory Management** –  `malloc` implementation  
-- 🔌 **Peripheral Drivers** – UART, SPI, I2C, and GPIO support  
-- 💻 **Unix-Style Shell** – Command-line interface to test drivers  
-- ⚡ **Lightweight Build** – <10kb binary size
+- **Cooperative Scheduler** – Basic multitasking with a round-robin co-operative scheduler  
+- **Custom Memory Management** –  `malloc` implementation  
+- **Peripheral Drivers** – UART, SPI, I2C, and GPIO support   
+- **Lightweight Build** – <10kb binary size
 
 ---
 
@@ -27,7 +26,7 @@ This project demonstrates OS fundamentals on constrained hardware, with a total 
 ## Getting Started
 
 ### Prerequisites
-- Xtensa GCC toolchain installed (`xtensa-esp32-elf-gcc`)
+- Xtensa GCC toolchain installed (`xtensa-esp32-elf-g++`)
 - [esptool.py](https://github.com/espressif/esptool) for flashing  
 - ESP32 development board
 
@@ -44,16 +43,21 @@ This project demonstrates OS fundamentals on constrained hardware, with a total 
 
    This will spit out an elf and a bin. The elf is an intermediate, the bin is what's actually flashed.
 
-3. Flash to device:
+3. Flash:
    ```bash
    esptool.py --chip esp32 --port "PORT HERE" --before default_reset --after hard_reset write_flash 0x1000 os.bin
    ```
 
+Alternative Build and flash:
+   ```bash
+   make flash
+   ```
+   Note: I set this up for my comedy dev environment where I've got a WSL2 Ubuntu machine for compilation but still use the host to actually upload code. If you're normal and use Linux you'll need to change this command in the makefile around a lil bit.
 ---
 
 ## Usage
 Once flashed, connect to the ESP32 over serial (I use PuTTY) and access the built-in shell.  
-From here, you can test drivers, run commands, and observe task scheduling.
+From here, you can test drivers, and observe task scheduling.
 
 ---
 
@@ -66,4 +70,4 @@ From here, you can test drivers, run commands, and observe task scheduling.
 ---
 
 ## License
-MIT License. See [LICENSE](./LICENSE) for details.
+Super duper proprietary DS License. See [LICENSE](./LICENSE) for details.

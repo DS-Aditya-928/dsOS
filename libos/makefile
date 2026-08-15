@@ -1,13 +1,13 @@
 CFLAGS?=-g
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib
 CPPFLAGS:=$(CPPFLAGS) -Iinclude -I../include
 LIBK_CFLAGS:=$(CFLAGS) -L../libc -Lk
 LIBK_CPPFLAGS:=$(CPPFLAGS)
 
 FREEOBJS=\
 SCHEDULER/scheduler.o \
-#SCHEDULER/yield.o \
+SCHEDULER/yield.o \
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
