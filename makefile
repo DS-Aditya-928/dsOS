@@ -5,10 +5,10 @@ MAKEFILE = makefile
 
 OS_SRCS = os/os.c++
 
-OS_NAME = dsOS2
+OS_NAME = dsOS
 TARGET = $(OS_NAME).elf
 TARGET_BIN = $(OS_NAME).bin
-CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin -nostdlib
+CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin -nostdlib -nostartfiles
 
 INCLUDES = -Iinclude
 
@@ -16,14 +16,14 @@ LDIRS = -Llibhal -Llibc -Llibos
 LIBS = -los -lhal -lk
 LIBS_PATHS = libos/libos.a libhal/libhal.a libc/libk.a
 
-LDFLAGS = -nostdlib -nostartfiles -Wl,-Tesp32/linker.ld
+LDFLAGS = -Wl,-T esp32/linker.ld -Wl,-Map=sections.map
 
 CHIP = esp32
 FLASH_MODE = "dio"
 FLASH_SIZE = "4MB"
 FLASH_FREQ = "40m"
 
-DISASM_FLAGS = -D -f
+DISASM_FLAGS = -D -f -h
 
 DEFAULT: $(TARGET)
 

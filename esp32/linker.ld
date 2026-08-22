@@ -13,6 +13,8 @@ SECTIONS
   /DISCARD/ : {
     *(.eh_frame)
     *(.eh_frame_hdr)
+    *(.comment)
+    *(.xt*)
   }
   .iram.text : ALIGN(4)
   {
@@ -23,6 +25,7 @@ SECTIONS
     KEEP (*(.init))
     KEEP (*(.fini))
     
+    *(.literal .text .literal.* .text.*)
 
     . = ALIGN(4);
     _etext = .;
@@ -57,6 +60,18 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;
     PROVIDE(_ebss = .);
+  } >dram_seg
+
+  .init_section : ALIGN(4)
+  {
+    . = ALIGN(4);
+    __init_array_start = .;
+    KEEP (*(.init))
+    KEEP(*(.init_array))
+    KEEP(*(.init_array.*))
+    KEEP(*(.ctors))
+    KEEP(*(.ctors.*))
+    __init_array_end = .;
   } >dram_seg
 
   . = ALIGN(4);
