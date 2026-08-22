@@ -1,18 +1,28 @@
-#ifndef dsWDT
-#define dsWDT
-
-
-namespace WDT
+#pragma once
+enum class WDTID
 {
-    enum WatchDogs
+    TIMG0,
+    TIMG1,
+    RTCID
+};
+
+class WDTBase
+{
+protected:
+    static void HdisableBootProtection(WDTID);
+};
+
+
+template<WDTID id>
+class WDT : public WDTBase
+{
+public:
+    static void disableBootProtection()
     {
-        TIMG0,
-        TIMG1,
-        RTC
-    };
+        HdisableBootProtection(id);
+    }
+};
 
-    void disableBootProtection(int);
-    void disableWatchdog(int);
-}
-
-#endif
+using WDT0 = WDT<WDTID::TIMG0>;
+using WDT1 = WDT<WDTID::TIMG1>;
+using WDTRTC = WDT<WDTID::RTCID>;

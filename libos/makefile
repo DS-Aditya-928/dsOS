@@ -1,25 +1,13 @@
 CFLAGS?=-g
-CPPFLAGS?=
-LDFLAGS?=
-LIBS?=
 
-DESTDIR?=../sysroot
-PREFIX?=/usr/local
-EXEC_PREFIX?=$(PREFIX)
-INCLUDEDIR?=$(PREFIX)/include
-LIBDIR?=$(EXEC_PREFIX)/lib
-
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mabi=call0 -nostdlib
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib
 CPPFLAGS:=$(CPPFLAGS) -Iinclude -I../include
 LIBK_CFLAGS:=$(CFLAGS) -L../libc -Lk
 LIBK_CPPFLAGS:=$(CPPFLAGS)
 
 FREEOBJS=\
-UART/uart.o \
-WDT/wdt.o \
-MMU/mmu.o \
-GPIO/gpio.o \
-CLOCK/clock.o
+SCHEDULER/scheduler.o \
+SCHEDULER/yield.o \
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
@@ -28,16 +16,16 @@ OBJS=\
 $(FREEOBJS) \
 $(HOSTEDOBJS) \
 
-LIBK_OBJS=$(FREEOBJS:.o=.libhal.o)
+LIBK_OBJS=$(FREEOBJS:.o=.libos.o)
 
-BINARIES=libhal.a
+BINARIES=libos.a
 
 .PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libhal.o .cpp .s
+.SUFFIXES: .o .libos.o .cpp .s .S
 
 all: $(BINARIES)
 
-libhal.a: $(LIBK_OBJS) makefile
+libos.a: $(LIBK_OBJS) makefile
 	xtensa-esp32-elf-ar rcs $@ $(LIBK_OBJS)
 
 .cpp.o:
@@ -46,11 +34,13 @@ libhal.a: $(LIBK_OBJS) makefile
 .cpp.s:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
-.cpp.libhal.o:
+.cpp.libos.o:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
-.S.libhal.o:
+.S.libos.o:
 	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+.S.o:
+	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 clean:
 	rm -f $(BINARIES) *.a

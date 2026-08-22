@@ -13,23 +13,25 @@
 #define RTC_WP_OFF 0x00A4
 #define RTC_CNTL_WDTCONFIG0_OFF 0x8C 
 
-static void disableWP(int tnum)
+
+
+static void disableWP(WDTID tnum)
 {
     switch(tnum)
     {
-        case 0:
+        case WDTID::TIMG0:
         {
             *(int*)(TIMG0_BASE + TIMG_WP_OFF) = MAGICNUM;
             break;
         }
         
-        case 1:
+        case WDTID::TIMG1:
         {
             *(int*)(TIMG1_BASE + TIMG_WP_OFF) = MAGICNUM;
             break;
         }
 
-        case 2:
+        case WDTID::RTCID:
         {
             *(int*)(RTC_BASE + RTC_WP_OFF) = MAGICNUM;
             break;
@@ -37,23 +39,23 @@ static void disableWP(int tnum)
     }    
 }
 
-static void enableWP(int tnum)
+static void enableWP(WDTID tnum)
 {
     switch(tnum)
     {
-        case 0:
+        case WDTID::TIMG0:
         {
             *(int*)(TIMG0_BASE + TIMG_WP_OFF) = 1;
             break;
         }
         
-        case 1:
+        case WDTID::TIMG1:
         {
             *(int*)(TIMG1_BASE + TIMG_WP_OFF) = 1;
             break;
         }
 
-        case 2:
+        case WDTID::RTCID:
         {
             *(int*)(RTC_BASE + RTC_WP_OFF) = 1;
             break;
@@ -61,26 +63,26 @@ static void enableWP(int tnum)
     }
 }
 
-void WDT::disableBootProtection(int tnum)
+void WDTBase::HdisableBootProtection(WDTID tnum)
 {
     //first disable write protection
     disableWP(tnum);
     unsigned int* confReg = 0;
     switch(tnum)
     {
-        case 0:
+        case WDTID::TIMG0:
         {
             confReg = (unsigned int*)(TIMG0_BASE + TIMG_WDTCONFIG0_OFF);
             break;
         }
 
-        case 1:
+        case WDTID::TIMG1:
         {
             confReg = (unsigned int*)(TIMG1_BASE + TIMG_WDTCONFIG0_OFF);
             break;
         }
 
-        case 2:
+        case WDTID::RTCID:
         {
             confReg = (unsigned int*)(RTC_BASE + RTC_CNTL_WDTCONFIG0_OFF);
             break;
@@ -94,14 +96,14 @@ void WDT::disableBootProtection(int tnum)
 
     switch(tnum)
     {
-        case 0:
-        case 1:
+        case WDTID::TIMG0:
+        case WDTID::TIMG1:
         {
             status &= ~(1U << 14);
             break;
         }
 
-        case 2:
+        case WDTID::RTCID:
         {
             status &= ~(1U << 10);
             break;
