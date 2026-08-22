@@ -1,6 +1,6 @@
-#include "UART.h"
-#include "string.h"
 #include <stdint.h>
+#include "uart.h"
+#include "string.h"
 
 #define UART_FIFO_REG  0x0
 #define UART_INT_ST_REG 0x8

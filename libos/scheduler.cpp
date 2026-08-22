@@ -1,5 +1,7 @@
-#include "OS.h"
-#include "UART.h"
+#include "os.h"
+#include "uart.h"
+#include "string.h"
+#include "stdlib.h"
 
 int dsOS::taskCount = 0; // Initialize task count
 int dsOS::curTask = 0; // Initialize current task index

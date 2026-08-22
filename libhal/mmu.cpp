@@ -1,4 +1,4 @@
-#include "MMU.h"
+#include "mmu.h"
 
 #define FLASHRAM 0x3F800000
 #define FLASHRAMSIZE 0x8000

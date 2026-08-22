@@ -1,61 +1,36 @@
-CFLAGS?=-g
-CPPFLAGS?=
-LDFLAGS?=
-LIBS?=
+OUTLIB = libhal.a
 
-DESTDIR?=../sysroot
-PREFIX?=/usr/local
-EXEC_PREFIX?=$(PREFIX)
-INCLUDEDIR?=$(PREFIX)/include
-LIBDIR?=$(EXEC_PREFIX)/lib
+CXXFLAGS := -g -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mabi=call0 -nostdlib
-CPPFLAGS:=$(CPPFLAGS) -Iinclude -I../include
-LIBK_CFLAGS:=$(CFLAGS) -L../libc -Lk
-LIBK_CPPFLAGS:=$(CPPFLAGS)
+FOUND_INCLUDES := $(wildcard include ../*/include)
+INC_FLAGS := $(addprefix -I, $(FOUND_INCLUDES))
+CPPFLAGS := $(INC_FLAGS)
 
-FREEOBJS=\
-UART/uart.o \
-WDT/wdt.o \
-MMU/mmu.o \
-GPIO/gpio.o \
-CLOCK/clock.o
+BUILD_DIR := build
 
-HOSTEDOBJS=\
-$(ARCH_HOSTEDOBJS) \
+CPP_SRCS := $(wildcard *.cpp */*.cpp)
+S_SRCS   := $(wildcard *.S */*.S)
 
-OBJS=\
-$(FREEOBJS) \
-$(HOSTEDOBJS) \
+CPP_OBJS := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(CPP_SRCS))
+S_OBJS   := $(patsubst %.S,$(BUILD_DIR)/%.o,$(S_SRCS))
+OBJS     := $(CPP_OBJS) $(S_OBJS)
 
-LIBK_OBJS=$(FREEOBJS:.o=.libhal.o)
+.PHONY: all clean
 
-BINARIES=libhal.a
+all: $(OUTLIB)
 
-.PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libhal.o .cpp .s
+$(OUTLIB): $(OBJS) makefile
+	xtensa-esp32-elf-ar rcs $@ $(OBJS)
 
-all: $(BINARIES)
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS)
 
-libhal.a: $(LIBK_OBJS) makefile
-	xtensa-esp32-elf-ar rcs $@ $(LIBK_OBJS)
-
-.cpp.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
-.cpp.s:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
-.cpp.libhal.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
-
-.S.libhal.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+$(BUILD_DIR)/%.o: %.S
+	@mkdir -p $(dir $@)
+	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS)
 
 clean:
-	rm -f $(BINARIES) *.a
-	rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
-	rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
+	rm -rf $(BUILD_DIR) $(OUTLIB)
 
 -include $(OBJS:.o=.d)
--include $(LIBK_OBJS:.o=.d)

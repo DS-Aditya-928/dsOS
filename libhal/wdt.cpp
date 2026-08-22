@@ -1,4 +1,4 @@
-#include "WDT.h" 
+#include "wdt.h" 
 
 #define MAGICNUM 0x050D83AA1
 

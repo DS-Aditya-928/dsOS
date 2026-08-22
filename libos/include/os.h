@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "string.h"
-#include "UART.h"
+#include "uart.h"
 
 #define MAX_TASKS 32
 

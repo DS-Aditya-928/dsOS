@@ -1,11 +1,11 @@
 #include <stdint.h>
-#include <string.h>
-#include <CLOCK.h>
-#include <UART.h>
-#include <WDT.h>
-#include <MMU.h>
-#include <GPIO.h>
-#include <OS.h>
+#include "string.h"
+#include "clock.h"
+#include "uart.h"
+#include "wdt.h"
+#include "mmu.h"
+#include "gpio.h"
+#include "os.h"
 
 int a = 0;
 int b = 0;

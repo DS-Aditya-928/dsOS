@@ -1,4 +1,4 @@
-#include "GPIO.h"
+#include "gpio.h"
 
 #define GPIO_BASE 0x3FF44000
 

@@ -1,6 +1,6 @@
-#include <string.h>
-#include <MMU.h>
-#include <UART.h>
+#include "string.h"
+#include "mmu.h"
+#include "uart.h"
 
 extern "C" void* malloc(size_t s)
 {

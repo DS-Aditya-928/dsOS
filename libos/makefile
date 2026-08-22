@@ -1,51 +1,36 @@
-CFLAGS?=-g
+OUTLIB = libos.a
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib
-CPPFLAGS:=$(CPPFLAGS) -Iinclude -I../include
-LIBK_CFLAGS:=$(CFLAGS) -L../libc -Lk
-LIBK_CPPFLAGS:=$(CPPFLAGS)
+CXXFLAGS := -g -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib
 
-FREEOBJS=\
-SCHEDULER/scheduler.o \
-SCHEDULER/yield.o \
+FOUND_INCLUDES := $(wildcard include ../*/include)
+INC_FLAGS := $(addprefix -I, $(FOUND_INCLUDES))
+CPPFLAGS := $(INC_FLAGS)
 
-HOSTEDOBJS=\
-$(ARCH_HOSTEDOBJS) \
+BUILD_DIR := build
 
-OBJS=\
-$(FREEOBJS) \
-$(HOSTEDOBJS) \
+CPP_SRCS := $(wildcard *.cpp */*.cpp)
+S_SRCS   := $(wildcard *.S */*.S)
 
-LIBK_OBJS=$(FREEOBJS:.o=.libos.o)
+CPP_OBJS := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(CPP_SRCS))
+S_OBJS   := $(patsubst %.S,$(BUILD_DIR)/%.o,$(S_SRCS))
+OBJS     := $(CPP_OBJS) $(S_OBJS)
 
-BINARIES=libos.a
+.PHONY: all clean
 
-.PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libos.o .cpp .s .S
+all: $(OUTLIB)
 
-all: $(BINARIES)
+$(OUTLIB): $(OBJS) makefile
+	xtensa-esp32-elf-ar rcs $@ $(OBJS)
 
-libos.a: $(LIBK_OBJS) makefile
-	xtensa-esp32-elf-ar rcs $@ $(LIBK_OBJS)
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS)
 
-.cpp.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
-.cpp.s:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
-.cpp.libos.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
-
-.S.libos.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
-.S.o:
-	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+$(BUILD_DIR)/%.o: %.S
+	@mkdir -p $(dir $@)
+	xtensa-esp32-elf-g++ -MD -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS)
 
 clean:
-	rm -f $(BINARIES) *.a
-	rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
-	rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
+	rm -rf $(BUILD_DIR) $(OUTLIB)
 
 -include $(OBJS:.o=.d)
--include $(LIBK_OBJS:.o=.d)

@@ -10,11 +10,12 @@ TARGET = $(OS_NAME).elf
 TARGET_BIN = $(OS_NAME).bin
 CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin -nostdlib -nostartfiles
 
-INCLUDES = -Iinclude
+FOUND_INCLUDES := $(wildcard include */include)
+INCLUDES := $(addprefix -I, $(FOUND_INCLUDES))
 
-LDIRS = -Llibhal -Llibc -Llibos
+LDIRS = -Llibhal -Llibk -Llibos
 LIBS = -los -lhal -lk
-LIBS_PATHS = libos/libos.a libhal/libhal.a libc/libk.a
+LIBS_PATHS = libos/libos.a libhal/libhal.a libk/libk.a
 
 LDFLAGS = -Wl,-T esp32/linker.ld -Wl,-Map=sections.map
 
@@ -47,7 +48,7 @@ clean-libs:
 clean-main:
 	rm -f *.o *.bin *.elf *.disasm
 
-clean: clean-libs clean-main $(TARGET)
+clean: clean-libs clean-main
 
 flash: $(TARGET)
 	powershell.exe -Command "esptool -p $(PORT) --before default-reset --after hard-reset write-flash 0x1000 $$(wslpath -w ~/esp32OS/$(TARGET_BIN))"
