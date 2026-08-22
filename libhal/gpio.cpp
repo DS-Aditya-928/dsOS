@@ -7,7 +7,7 @@
 #define GPIO_ENABLE_W1TC_REG 0x28
 #define GPIO_ENABLE1_REG 0x2C
 #define GPIO_ENABLE1_W1TS_REG 0x30
-#define GPIO_ENABLE1_W1TC_REG 0x34 
+#define GPIO_ENABLE1_W1TC_REG 0x34
 
 #define GPIO_OUT_W1TS_REG 0x08
 #define GPIO_OUT_W1TC_REG 0x0C
@@ -19,12 +19,12 @@
 
 uint8_t GPIO::read(uint8_t pin)
 {
-    if(pin < 32)
+    if (pin < 32)
     {
         uint32_t inReg = *(uint32_t*)(GPIO_BASE + GPIO_IN_REG);
         return (inReg >> pin) & 0x1;
     }
-    else if(pin < 40)
+    else if (pin < 40)
     {
         uint32_t inReg = *(uint32_t*)(GPIO_BASE + GPIO_IN2_REG);
         return (inReg >> (pin - 32)) & 0x1;
@@ -35,12 +35,12 @@ uint8_t GPIO::read(uint8_t pin)
 
 uint8_t GPIO::getMode(uint8_t pin)
 {
-    if(pin < 32)
+    if (pin < 32)
     {
         uint32_t modeReg = *(uint32_t*)(GPIO_BASE + GPIO_ENABLE_REG);
         return (modeReg >> pin) & 0x1;
     }
-    else if(pin < 40)
+    else if (pin < 40)
     {
         uint32_t modeReg = *(uint32_t*)(GPIO_BASE + GPIO_ENABLE1_REG);
         return (modeReg >> pin) & 0x1;
@@ -51,9 +51,9 @@ uint8_t GPIO::getMode(uint8_t pin)
 
 void GPIO::setMode(uint8_t pin, uint8_t mode)
 {
-    if(pin < 32)
+    if (pin < 32)
     {
-        if(mode)
+        if (mode)
         {
             *(uint32_t*)(GPIO_BASE + GPIO_ENABLE_W1TS_REG) = (1 << pin);
         }
@@ -62,9 +62,9 @@ void GPIO::setMode(uint8_t pin, uint8_t mode)
             *(uint32_t*)(GPIO_BASE + GPIO_ENABLE_W1TC_REG) = (1 << pin);
         }
     }
-    else if(pin < 40)
+    else if (pin < 40)
     {
-        if(mode)
+        if (mode)
         {
             *(uint32_t*)(GPIO_BASE + GPIO_ENABLE1_W1TS_REG) = (1 << (pin - 32));
         }
@@ -78,9 +78,9 @@ void GPIO::setMode(uint8_t pin, uint8_t mode)
 
 void GPIO::write(uint8_t pin, uint8_t state)
 {
-    if(pin < 32)
+    if (pin < 32)
     {
-        if(state)
+        if (state)
         {
             *(uint32_t*)(GPIO_BASE + GPIO_OUT_W1TS_REG) = (1 << pin);
         }
@@ -90,9 +90,9 @@ void GPIO::write(uint8_t pin, uint8_t state)
         }
     }
 
-    else if(pin < 40)
+    else if (pin < 40)
     {
-        if(state)
+        if (state)
         {
             *(uint32_t*)(GPIO_BASE + GPIO_OUT1_W1TS_REG) = (1 << (pin - 32));
         }

@@ -20,6 +20,7 @@ OBJS     := $(CPP_OBJS) $(S_OBJS)
 all: $(OUTLIB)
 
 $(OUTLIB): $(OBJS) makefile
+	clang-format -i -style="{BasedOnStyle: WebKit, BreakBeforeBraces: Allman}" $(wildcard *.cpp  include/*.h)
 	xtensa-esp32-elf-ar rcs $@ $(OBJS)
 
 $(BUILD_DIR)/%.o: %.cpp
@@ -32,5 +33,7 @@ $(BUILD_DIR)/%.o: %.S
 
 clean:
 	rm -rf $(BUILD_DIR) $(OUTLIB)
+
+rebuild: clean all
 
 -include $(OBJS:.o=.d)

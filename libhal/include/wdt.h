@@ -12,8 +12,7 @@ protected:
     static void HdisableBootProtection(WDTID);
 };
 
-
-template<WDTID id>
+template <WDTID id>
 class WDT : public WDTBase
 {
 public:

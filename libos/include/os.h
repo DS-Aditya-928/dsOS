@@ -1,13 +1,13 @@
 #pragma once
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "string.h"
 #include "uart.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 #define MAX_TASKS 32
 
-struct TaskInfo 
+struct TaskInfo
 {
     uint32_t registers[17]; // General-purpose registers. 17 is ret addr
     bool isActive = false;
@@ -20,10 +20,12 @@ private:
     static int curTask; // Current task index
     static int taskCount; // Total number of tasks
     static TaskInfo taskData[MAX_TASKS];
+
 protected:
     static void hiddenYield();
 
     friend void yield();
+
 public:
     static bool createTask(void (*entry)(void), uint32_t stackSize);
     static void startScheduler();
@@ -33,19 +35,18 @@ extern "C" void hiddenYield();
 extern "C" uint32_t* oldRegisters;
 extern "C" uint32_t* newRegisters;
 
-inline  __attribute__((always_inline)) void yield()
+inline __attribute__((always_inline)) void yield()
 {
-    //1.) Save all the current function's registers
-    //2.) Call hiddenYield to save ret point and load second task's registers. hiddenYield will also jump.
-    asm volatile (
+    // 1.) Save all the current function's registers
+    // 2.) Call hiddenYield to save ret point and load second task's registers. hiddenYield will also jump.
+    asm volatile(
         "mov %0, a0\n"
         : "=r"(dsOS::taskData[dsOS::curTask].registers[16])
         :
-        : 
-    ); 
-    
-    //uint32_t regBuf[16]; // Buffer to save registers
-    asm volatile (
+        :);
+
+    // uint32_t regBuf[16]; // Buffer to save registers
+    asm volatile(
         "s32i  a0,  %0,  0\n"
         "s32i  a1,  %0,  4\n"
         "s32i  a2,  %0,  8\n"
@@ -63,15 +64,13 @@ inline  __attribute__((always_inline)) void yield()
         "s32i  a14, %0, 56\n"
         "s32i  a15, %0, 60\n"
         :
-        : "r"(dsOS::taskData[dsOS::curTask].registers)             // %0 = C variable regs
-        :      
-    );
-    
+        : "r"(dsOS::taskData[dsOS::curTask].registers) // %0 = C variable regs
+        :);
+
     dsOS::hiddenYield();
-    asm volatile (
+    asm volatile(
         "mov a0, %0\n"
         :
         : "r"(dsOS::taskData[dsOS::curTask].registers[16])
-        : 
-    );
+        :);
 }

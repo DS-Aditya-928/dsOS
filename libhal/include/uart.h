@@ -7,12 +7,13 @@
 #define UART_1 0x3FF50000
 #define UART_2 0x3FF6E000
 
-template<unsigned int base>
+template <unsigned int base>
 class UART
 {
 private:
-    //static const unsigned int uart = base;
+    // static const unsigned int uart = base;
     static void sendCharW(char x);
+
 public:
     static void setActive(int);
     static int init(uint32_t baudRate);

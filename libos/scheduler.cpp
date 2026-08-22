@@ -1,7 +1,7 @@
 #include "os.h"
-#include "uart.h"
-#include "string.h"
 #include "stdlib.h"
+#include "string.h"
+#include "uart.h"
 
 int dsOS::taskCount = 0; // Initialize task count
 int dsOS::curTask = 0; // Initialize current task index
@@ -13,17 +13,17 @@ uint32_t yieldJumpAddr = 0;
 
 void dsOS::hiddenYield()
 {
-    asm volatile (
-    "mov %0, a0\n"
-    : "=r"(taskData[curTask].registers[0])
-    :
-    : "memory"
-    );
+    asm volatile(
+        "mov %0, a0\n"
+        : "=r"(taskData[curTask].registers[0])
+        :
+        : "memory");
 
     curTask++;
-    if(curTask >= taskCount) curTask = 0; // Switch tasks round robin style baybeeeee
-    
-    asm volatile (
+    if (curTask >= taskCount)
+        curTask = 0; // Switch tasks round robin style baybeeeee
+
+    asm volatile(
         "l32i a0,  %0,  0\n"
         "l32i a1,  %0,  4\n"
         "l32i a2,  %0,  8\n"
@@ -40,37 +40,38 @@ void dsOS::hiddenYield()
         "l32i a14, %0, 56\n"
         "l32i a15, %0, 60\n"
         "l32i a9,  %0, 36\n"
-        "jx a0\n" 
+        "jx a0\n"
         :
         : "r"(taskData[curTask].registers)
-        :  
-        );
+        :);
 }
 
 bool dsOS::createTask(void (*entry)(void), uint32_t stackSize)
 {
-    if(taskCount >= MAX_TASKS) return(false);
+    if (taskCount >= MAX_TASKS)
+        return (false);
     taskData[taskCount].stackPointer = (uint32_t)malloc(stackSize) + stackSize; // Allocate stack memory
-    if(taskData[taskCount].stackPointer == 0) return(false); // Check if memory allocation was successful
+    if (taskData[taskCount].stackPointer == 0)
+        return (false); // Check if memory allocation was successful
     taskData[taskCount].isActive = true;
     taskData[taskCount].registers[0] = (uint32_t)entry; // Set entry point
-    //taskData[taskCount].returnAddress = (uint32_t)entry; // Set entry point
+    // taskData[taskCount].returnAddress = (uint32_t)entry; // Set entry point
     taskData[taskCount].registers[1] = taskData[taskCount].stackPointer; // Set stack pointer
 
     taskCount++;
-    
-    return(true);
+
+    return (true);
 }
 
 void dsOS::startScheduler()
 {
-    if(taskCount == 0) return; // No tasks to schedule
-    
-    asm volatile (
+    if (taskCount == 0)
+        return; // No tasks to schedule
+
+    asm volatile(
         "l32i a0,  %0,  0\n"
         "jx a0\n"
         :
         : "r"(&taskData[0].registers) // Load the entry point of the first task
-        :
-    );
+        :);
 }
