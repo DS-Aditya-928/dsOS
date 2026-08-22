@@ -29,6 +29,7 @@ protected:
 public:
     static bool createTask(void (*entry)(void), uint32_t stackSize);
     static void startScheduler();
+    static void runInit();
 };
 
 extern "C" void hiddenYield();
