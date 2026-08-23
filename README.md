@@ -17,7 +17,7 @@ This project demonstrates OS fundamentals on constrained hardware, with a total 
 ---
 
 ## Tech Stack
-- **Languages:** C, C++ (still porting parts out of C :p)  
+- **Languages:** C++, asm (side note: C++ is not a great choice but hey its fun) 
 - **Low-Level:** Xtensa Assembly, Linker Scripts  
 - **Platform:** ESP32
 
