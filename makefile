@@ -51,4 +51,4 @@ clean-main:
 clean: clean-libs clean-main
 
 flash: $(TARGET)
-	powershell.exe -Command "esptool -p $(PORT) --before default-reset --after hard-reset write-flash 0x1000 $$(wslpath -w ~/esp32OS/$(TARGET_BIN))"
+	esptool -p $(PORT) --before default-reset --after hard-reset write-flash 0x1000 $(TARGET_BIN)

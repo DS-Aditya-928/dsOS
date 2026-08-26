@@ -115,6 +115,90 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     UART0::print("Compiled on "); UART0::print(__DATE__); UART0::print(" at "); UART0::print(__TIME__); UART0::print(".\r\n");
     GPIO::setMode(2, 1);
 
+    /*
+    Example 1. A PRO_CPU process, with a PID of 1, needs to read external flash address 0x07_2375 via virtual
+    address 0x3F70_2375. The MMU is not in the special mode.
+    • According to Table 4.3-9, virtual address 0x3F70_2375 resides in the 0x30’th page of .VAddr0
+    • According to Table 4.3-10, the MMU entry for VAddr0 for PID 0/1 for the PRO_CPU starts at 0.
+    • The modified MMU entry is 0 + 0x30 = 0x30.
+    • Address 0x07_2375 resides in the 7’th 64 KB-sized page.
+    • MMU entry 0x30 needs to be set to 7 and marked as valid by setting the 8’th bit to 0. Thus, 0x007 is
+    written to MMU entry 0x30.
+    */
+
+    volatile uint32_t v = *(volatile uint32_t*)(0x3FF00040);
+    v = v | (1 << 3); 
+    *(volatile uint32_t*)(0x3FF00040) = v;
+    
+    *(volatile uint32_t*)(0x3FF00044) &= ~0x1F;
+
+    UART0::print("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);UART0::print("\r\n");
+    *(uint32_t*)(0x3FF10000 + (0x30*4)) = 0x7;
+    UART0::print("Val: "); UART0::print(*(uint32_t*)0x3F702375);UART0::print("\r\n");
+    UART0::print("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);UART0::print("\r\n");
+    *(uint32_t*)(0x3FF10000 + (0x30*4)) = 0x8;
+    UART0::print("Val: "); UART0::print(*(uint32_t*)0x3F702385);UART0::print("\r\n");
+    UART0::print("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);UART0::print("\r\n");
+
+
+    /*
+    Example 2. An APP_CPU process, with a PID of 4, needs to read external flash address 0x44_048C via virtual
+    address 0x4044_048C. The MMU is not in special mode.
+    • According to Table 4.3-9, virtual address 0x4044_048C resides in the 0x4’th page of VAddr2 .
+    • According to Table 4.3-11, the MMU entry for VAddr2 for PID 0/1 for the PRO_CPU starts at 128.
+    • The modified MMU entry is 128 + 0x4 = 132.
+    • Address 0x44_048C resides in the 0x44’th 64 KB-sized page.
+    • MMU entry 132 needs to be set to 0x44 and marked as valid by setting the 8’th bit to 0. Thus, 0x044 is
+    written to MMU entry 132.
+    */
+
+    /*
+    volatile uint32_t v = *(volatile uint32_t*)(0x3FF00040);
+    v = v | (1 << 3); 
+    *(volatile uint32_t*)(0x3FF00040) = v;
+    
+    *(volatile uint32_t*)(0x3FF00044) &= ~0x1F;
+    */
+
+    UART0::print("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);UART0::print("\r\n");
+    *(uint32_t*)(0x3FF10000 + (132*4)) = 0x44;
+    UART0::print("Val: "); UART0::print(*(uint32_t*)0x4044048C);UART0::print("\r\n");
+    
+    for(volatile int i = 0; i < 1000000; i++);
+    volatile uint32_t u = *(volatile uint32_t*)(0x3FF00040);
+    u = u | (1 << 3); 
+    *(volatile uint32_t*)(0x3FF00040) = u;
+
+    u = *(volatile uint32_t*)(0x3FF00040);
+    u = u & ~(1 << 4); 
+    *(volatile uint32_t*)(0x3FF00040) = u;
+    for(volatile int i = 0; i < 1000000; i++);
+
+    for(volatile int i = 0; i < 1000000; i++);
+    u = *(volatile uint32_t*)(0x3FF00040);
+    u = u & ~(1 << 3); 
+    *(volatile uint32_t*)(0x3FF00040) = u;
+    
+    UART0::print("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);UART0::print("\r\n");
+    *(uint32_t*)(0x3FF10000 + (132*4)) = 0x40;
+    for(volatile int i = 0; i < 1000000; i++);
+     u = *(volatile uint32_t*)(0x3FF00040);
+    u = u | (1 << 3); 
+    *(volatile uint32_t*)(0x3FF00040) = u;
+
+    u = *(volatile uint32_t*)(0x3FF00040);
+    u = u & ~(1 << 4); 
+    *(volatile uint32_t*)(0x3FF00040) = u;
+    for(volatile int i = 0; i < 1000000; i++);
+
+    for(volatile int i = 0; i < 1000000; i++);
+     u = *(volatile uint32_t*)(0x3FF00040);
+    u = u & ~(1 << 3); 
+    *(volatile uint32_t*)(0x3FF00040) = u;
+    for(volatile int i = 0; i < 1000000; i++);
+    UART0::print("Val: "); UART0::print(*(uint32_t*)0x4044048C);UART0::print("\r\n");
+    UART0::print("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);UART0::print("\r\n");
+
     dsOS::createTask(&testFunc1, 2048);
     dsOS::createTask(&testFunc2, 2048);
     dsOS::createTask(&testFunc3, 2048);
