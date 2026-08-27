@@ -20,9 +20,9 @@ LIBS_PATHS = libos/libos.a libhal/libhal.a libk/libk.a
 LDFLAGS = -Wl,-T esp32/linker.ld -Wl,-Map=sections.map
 
 CHIP = esp32
-FLASH_MODE = "dio"
-FLASH_SIZE = "4MB"
-FLASH_FREQ = "40m"
+FLASH_MODE = dio
+FLASH_SIZE = 8MB
+FLASH_FREQ = 40m
 
 DISASM_FLAGS = -D -f -h
 
@@ -36,7 +36,7 @@ build_libs:
 
 $(TARGET): $(OS_SRCS) build_libs $(MAKEFILE)
 	$(CXX) $(OS_SRCS) $(LDFLAGS) $(CXXFLAGS) $(INCLUDES) $(LDIRS) $(LIBS) -o $(TARGET)
-	$(CONVERT) --chip $(CHIP) elf2image --flash_mode=$(FLASH_MODE) --flash_freq=$(FLASH_FREQ) --flash_size=$(FLASH_SIZE) -o $(TARGET_BIN) $(TARGET)
+	$(CONVERT) --chip $(CHIP) elf2image --flash-mode=$(FLASH_MODE) --flash-freq=$(FLASH_FREQ) --flash-size=$(FLASH_SIZE) -o $(TARGET_BIN) $(TARGET)
 	$(DISASM) $(DISASM_FLAGS) $(TARGET) > $(TARGET).disasm
 
 clean-libs:
@@ -51,4 +51,4 @@ clean-main:
 clean: clean-libs clean-main
 
 flash: $(TARGET)
-	powershell.exe -Command "esptool -p $(PORT) --before default-reset --after hard-reset write-flash 0x1000 $$(wslpath -w ~/esp32OS/$(TARGET_BIN))"
+	esptool -p $(PORT) --before usb-reset --after hard-reset write-flash 0x1000 $(TARGET_BIN)
