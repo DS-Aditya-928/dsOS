@@ -6,6 +6,7 @@
 #include "mmu.h"
 #include "gpio.h"
 #include "os.h"
+#include <float.h>
 
 class X
 {
@@ -101,6 +102,9 @@ void testFunc3(void)
         yield();
     }
 }
+
+extern "C" char* itoa(int value, char* buffer, int radix);
+
 extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 {  
     WDTRTC::disableBootProtection();
@@ -113,6 +117,8 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 
     UART0::print("Kernel loaded!\r\n");
     UART0::print("Compiled on "); UART0::print(__DATE__); UART0::print(" at "); UART0::print(__TIME__); UART0::print(".\r\n");
+    char x[10];
+    UART0::print(itoa(90, x, 10));UART0::print("\r\n");
     GPIO::setMode(2, 1);
 
     dsOS::createTask(&testFunc1, 2048);
