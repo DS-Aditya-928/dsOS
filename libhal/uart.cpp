@@ -75,7 +75,7 @@ bool UART<uart>::print(int x)
         sendCharW('-');
     }
     int b10 = 1;
-    while (b10 * 10 <= y)
+    while (b10 <= y / 10)
     {
         b10 = b10 * 10;
     }
@@ -96,7 +96,7 @@ bool UART<uart>::print(uint32_t x)
     sendCharW('I');
     uint32_t y = x;
     uint32_t b10 = 1;
-    while ((b10 * 10) <= y)
+    while (b10 <= y / 10)
     {
         b10 = b10 * 10;
     }

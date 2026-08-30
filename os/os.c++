@@ -1,11 +1,12 @@
 #include <stdint.h>
-#include "string.h"
+#include <string.h>
 #include "clock.h"
 #include "uart.h"
 #include "wdt.h"
 #include "mmu.h"
 #include "gpio.h"
 #include "os.h"
+#include "stdlib.h"
 #include <float.h>
 
 class X
@@ -103,8 +104,6 @@ void testFunc3(void)
     }
 }
 
-extern "C" char* itoa(int value, char* buffer, int radix);
-
 extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 {  
     WDTRTC::disableBootProtection();
@@ -113,6 +112,8 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     CLOCK_CNTL::init();
     UART0::init(115200);
     cMMU::init();
+    heapInit((void*)cMMU::getHeapStart(), cMMU::getHeapSize());
+
     dsOS::runInit();
 
     UART0::print("Kernel loaded!\r\n");
@@ -125,17 +126,12 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     dsOS::createTask(&testFunc2, 2048);
     dsOS::createTask(&testFunc3, 2048);
     UART0::print("\r\n");
-    UART0::print(*(uint32_t*)(0x3FF40000 + 0x14) & 0xFFFFFF);UART0::print("\r\n");
 
     //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
-    //volatile int x = 0;
     
     while(true)
     { 
-        //GPIO::write(2, 1);
-        UART0::print(exm.getX());
-        for(volatile int i = 0; i < 1000000; i++);
-        UART0::print(exm2.getX());
+        UART0::print((uint32_t)rand());UART0::print("\r\n");
         for(volatile int i = 0; i < 1000000; i++);
     }
 }

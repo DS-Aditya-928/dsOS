@@ -8,7 +8,7 @@ OS_SRCS = os/os.c++
 OS_NAME = dsOS
 TARGET = $(OS_NAME).elf
 TARGET_BIN = $(OS_NAME).bin
-CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin -nostdlib -nostartfiles
+CXXFLAGS = -mtext-section-literals -mabi=call0 -fno-exceptions -fno-builtin -nostdlib -nostartfiles -nostdinc
 
 FOUND_INCLUDES := $(wildcard include */include)
 INCLUDES := $(addprefix -I, $(FOUND_INCLUDES))

@@ -2,13 +2,13 @@ OUTLIB = libk.a
 
 CXXFLAGS := -g -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib -nostdinc
 
-INC_FLAGS := -I ./include
+INC_FLAGS := -I ./include -I ./
 CPPFLAGS := $(INC_FLAGS)
 
 BUILD_DIR := build
 
-C_SRCS := $(wildcard *.c)
-S_SRCS   := $(wildcard *.S)
+C_SRCS := $(wildcard src/*.c)
+S_SRCS   := $(wildcard src/*.S)
 
 C_OBJS := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SRCS))
 S_OBJS   := $(patsubst %.S,$(BUILD_DIR)/%.o,$(S_SRCS))
@@ -19,7 +19,7 @@ OBJS     := $(C_OBJS) $(S_OBJS)
 all: $(OUTLIB)
 
 $(OUTLIB): $(OBJS) makefile
-	clang-format -i -style="{BasedOnStyle: WebKit, BreakBeforeBraces: Allman}" $(wildcard *.c  include/*.h)
+	clang-format -i -style="{BasedOnStyle: WebKit, BreakBeforeBraces: Allman}" $(wildcard src/*.c include/*.h)
 	xtensa-esp32-elf-ar rcs $@ $(OBJS)
 
 $(BUILD_DIR)/%.o: %.c
