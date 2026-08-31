@@ -50,9 +50,9 @@ This project demonstrates OS fundamentals on constrained hardware, with a total 
 
 Alternative Build and flash:
    ```bash
-   make flash
+   make flash PORT="PORT HERE"
    ```
-   Note: I set this up for my comedy dev environment where I've got a WSL2 Ubuntu machine for compilation but still use the host to actually upload code. If you're normal and use Linux you'll need to change this command in the makefile around a lil bit.
+
 ---
 
 ## Usage

@@ -1,4 +1,4 @@
-#include <clock.h>
+#include "clock.h"
 #define XTL_CLK_FREQ 40000000
 
 #define RTC_CNTL_BASE_REG 0x3FF48000

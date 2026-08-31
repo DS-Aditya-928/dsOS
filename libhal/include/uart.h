@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define UART_0 0x3FF40000
@@ -10,17 +11,11 @@
 template <unsigned int base>
 class UART
 {
-private:
-    // static const unsigned int uart = base;
-    static void sendCharW(char x);
-
 public:
+    static void sendChar(char x);
     static void setActive(int);
     static int init(uint32_t baudRate);
-    static bool print(const char* data);
-    static bool print(int x);
-    static bool print(uint32_t x);
-    static bool print(char x);
+    static void print(const char* data, size_t len);
     static unsigned int available();
     static char read();
 };

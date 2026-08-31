@@ -1,0 +1,37 @@
+
+#define addr_ITOA 0x400566b4
+#define addr_ABORT 0x4000bba4
+#define addr_ABS 0x40056340
+#define addr_ATOI 0x400566c4
+#define addr_ATOL 0x400566ec
+#define addr_CALLOC 0x4000bee4
+#define addr_DIV 0x40056348
+#define addr_FREE 0x4000beb8
+#define addr_LABS 0x40056370
+#define addr_LDIV 0x40056378
+#define addr_MALLOC 0x4000bea0
+#define addr_QSORT 0x40056424
+#define addr_REALLOC 0x4000becc
+#define addr_STRTOL 0x4005681c
+#define addr_STRTOUL 0x4005692c
+
+#define addr_MEMCPY 0x4000c2c8
+#define addr_MEMMOVE 0x4000c3c0
+#define addr_STRLEN 0x400014c0
+#define addr_STRCPY 0x400013ac
+#define addr_STRNCPY 0x400015d4
+#define addr_STRCAT 0x4000c518
+#define addr_STRNCAT 0x4000c5c4
+#define addr_MEMCMP 0x4000c260
+#define addr_STRCMP 0x40001274
+#define addr_STRCOLL 0x40001398
+#define addr_STRNCMP 0x4000c5f4
+#define addr_MEMCHR 0x4000c244
+#define addr_STRCHR 0x4000c53c
+#define addr_STRCSPN 0x4000c558
+#define addr_STRRCHR 0x40001708
+#define addr_STRSPN 0x4000c648
+#define addr_STRSTR 0x4000c674
+#define addr_MEMSET 0x4000c44c
+
+#define addr_ETS_PRINTF 0x40007d54
