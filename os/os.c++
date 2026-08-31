@@ -136,13 +136,13 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     
     *(volatile uint32_t*)(0x3FF00044) &= ~0x1F;
 
-    UART0::print("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);UART0::print("\r\n");
+    printf("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);
     *(uint32_t*)(0x3FF10000 + (0x30*4)) = 0x7;
-    UART0::print("Val: "); UART0::print(*(uint32_t*)0x3F702375);UART0::print("\r\n");
-    UART0::print("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);UART0::print("\r\n");
+    printf("Val: %d\r\n", *(uint32_t*)0x3F702375);
+    printf("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);
     *(uint32_t*)(0x3FF10000 + (0x30*4)) = 0x8;
-    UART0::print("Val: "); UART0::print(*(uint32_t*)0x3F702385);UART0::print("\r\n");
-    UART0::print("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);UART0::print("\r\n");
+    printf("Val: %d\r\n", *(uint32_t*)0x3F702385);
+    printf("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);
 
 
     /*
@@ -164,9 +164,9 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     *(volatile uint32_t*)(0x3FF00044) &= ~0x1F;
     */
 
-    UART0::print("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);UART0::print("\r\n");
+    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);
     *(uint32_t*)(0x3FF10000 + (132*4)) = 0x44;
-    UART0::print("Val: "); UART0::print(*(uint32_t*)0x4044048C);UART0::print("\r\n");
+    printf("Val: %d\r\n", *(uint32_t*)0x4044048C);
     
     for(volatile int i = 0; i < 1000000; i++);
     volatile uint32_t u = *(volatile uint32_t*)(0x3FF00040);
@@ -183,7 +183,7 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     u = u & ~(1 << 3); 
     *(volatile uint32_t*)(0x3FF00040) = u;
     
-    UART0::print("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);UART0::print("\r\n");
+    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);
     *(uint32_t*)(0x3FF10000 + (132*4)) = 0x40;
     for(volatile int i = 0; i < 1000000; i++);
      u = *(volatile uint32_t*)(0x3FF00040);
@@ -200,8 +200,8 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     u = u & ~(1 << 3); 
     *(volatile uint32_t*)(0x3FF00040) = u;
     for(volatile int i = 0; i < 1000000; i++);
-    UART0::print("Val: "); UART0::print(*(uint32_t*)0x4044048C);UART0::print("\r\n");
-    UART0::print("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: "); UART0::print(*(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);UART0::print("\r\n");
+    printf("Val: %d\r\n", *(uint32_t*)0x4044048C);
+    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);
 
     dsOS::createTask(&testFunc1, 2048);
     dsOS::createTask(&testFunc2, 2048);
