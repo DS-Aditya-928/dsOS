@@ -1,6 +1,6 @@
 OUTLIB = libhal.a
 
-CXXFLAGS := -g -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib
+CXXFLAGS := -g -ffreestanding -Wall -Wextra -mtext-section-literals -mlongcalls -mabi=call0 -nostdlib -nostdinc
 
 FOUND_INCLUDES := $(wildcard include ../*/include)
 INC_FLAGS := $(addprefix -I, $(FOUND_INCLUDES))

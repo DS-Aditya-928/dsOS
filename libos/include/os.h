@@ -1,9 +1,9 @@
 #pragma once
 
-#include "string.h"
 #include "uart.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 #define MAX_TASKS 32
 
