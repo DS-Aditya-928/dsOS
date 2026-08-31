@@ -37,7 +37,7 @@ uint32_t a0Val = 0;
 
 void dumbFunc(void)
 {
-    yield();
+    dsOS::yield();
     printf("Dumb func called!\r\n");
 }
 
@@ -56,7 +56,6 @@ void testFunc1(void)
         );
         printf("1 %d \r\n", x);
         x++;
-        //yield();
         dumbFunc();
     }
 }
@@ -76,7 +75,7 @@ void testFunc2(void)
         printf("2 %d \r\n", x);
         x--;
 
-        yield();
+        dsOS::yield();
     }
 }
 
@@ -95,7 +94,7 @@ void testFunc3(void)
         printf("3 %d \r\n", x);
         x +=2;
 
-        yield();
+        dsOS::yield();
     }
 }
 
