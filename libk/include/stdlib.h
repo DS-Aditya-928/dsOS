@@ -48,6 +48,7 @@ extern "C"
     unsigned long long int strtoull(const char* restrict nptr, char** restrict endptr, int base);
 
     char* itoa(int value, char* buffer, int radix);
+    char* utoa(unsigned int value, char* buffer, int radix);
 
     int rand(void);
     void srand(unsigned int seed);

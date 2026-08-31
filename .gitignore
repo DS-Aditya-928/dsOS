@@ -8,4 +8,5 @@
 *.map
 build
 __reference
+__testFiles
 .vscode/

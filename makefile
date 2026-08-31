@@ -51,4 +51,4 @@ clean-main:
 clean: clean-libs clean-main
 
 flash: $(TARGET)
-	esptool -p $(PORT) --before usb-reset --after hard-reset write-flash 0x1000 $(TARGET_BIN)
+	esptool -p $(PORT) --before usb-reset --after hard-reset write-flash 0x1000 $(TARGET_BIN) 0x8000 __testFiles/dummy.bin 0x18000 __testFiles/dummy2.bin
