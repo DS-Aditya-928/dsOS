@@ -119,16 +119,7 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     printf("itoa test: %s\r\n", itoa(0xABCD, x, 16));
     GPIO::setMode(2, 1);
 
-    /*
-    Example 1. A PRO_CPU process, with a PID of 1, needs to read external flash address 0x07_2375 via virtual
-    address 0x3F70_2375. The MMU is not in the special mode.
-    • According to Table 4.3-9, virtual address 0x3F70_2375 resides in the 0x30’th page of .VAddr0
-    • According to Table 4.3-10, the MMU entry for VAddr0 for PID 0/1 for the PRO_CPU starts at 0.
-    • The modified MMU entry is 0 + 0x30 = 0x30.
-    • Address 0x07_2375 resides in the 7’th 64 KB-sized page.
-    • MMU entry 0x30 needs to be set to 7 and marked as valid by setting the 8’th bit to 0. Thus, 0x007 is
-    written to MMU entry 0x30.
-    */
+    //0x3FF00040: 3 enable, 4 flush, 5 done
 
     volatile uint32_t v = *(volatile uint32_t*)(0x3FF00040);
     v = v | (1 << 3); 
@@ -136,72 +127,31 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
     
     *(volatile uint32_t*)(0x3FF00044) &= ~0x1F;
 
-    printf("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);
-    *(uint32_t*)(0x3FF10000 + (0x30*4)) = 0x7;
-    printf("Val: %d\r\n", *(uint32_t*)0x3F702375);
-    printf("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);
-    *(uint32_t*)(0x3FF10000 + (0x30*4)) = 0x8;
-    printf("Val: %d\r\n", *(uint32_t*)0x3F702385);
-    printf("MMU entry for VAddr0 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (0x30*4)) & 0xFFFFFF);
-
-
-    /*
-    Example 2. An APP_CPU process, with a PID of 4, needs to read external flash address 0x44_048C via virtual
-    address 0x4044_048C. The MMU is not in special mode.
-    • According to Table 4.3-9, virtual address 0x4044_048C resides in the 0x4’th page of VAddr2 .
-    • According to Table 4.3-11, the MMU entry for VAddr2 for PID 0/1 for the PRO_CPU starts at 128.
-    • The modified MMU entry is 128 + 0x4 = 132.
-    • Address 0x44_048C resides in the 0x44’th 64 KB-sized page.
-    • MMU entry 132 needs to be set to 0x44 and marked as valid by setting the 8’th bit to 0. Thus, 0x044 is
-    written to MMU entry 132.
-    */
-
-    /*
-    volatile uint32_t v = *(volatile uint32_t*)(0x3FF00040);
-    v = v | (1 << 3); 
-    *(volatile uint32_t*)(0x3FF00040) = v;
+    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %u\r\n", *(uint32_t*)(0x3FF10000 + (192*4)) & 0xFFFFFF);
+    volatile uint32_t* mmuTable = (volatile uint32_t*)0x3FF10000;
     
-    *(volatile uint32_t*)(0x3FF00044) &= ~0x1F;
-    */
-
-    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);
-    *(uint32_t*)(0x3FF10000 + (132*4)) = 0x44;
-    printf("Val: %d\r\n", *(uint32_t*)0x4044048C);
+    // 64 kb page size = 0x10000
+    // VAddr3 page 0 corresponds to MMU entry 192
+    // real addr 0x8000 is in page 0.
+    mmuTable[192] = 0x000;
     
-    for(volatile int i = 0; i < 1000000; i++);
+    printf("Val: %x\r\n", *(volatile uint32_t*)0x40808000);
+
     volatile uint32_t u = *(volatile uint32_t*)(0x3FF00040);
-    u = u | (1 << 3); 
+    u = u | (1 << 4); 
     *(volatile uint32_t*)(0x3FF00040) = u;
 
-    u = *(volatile uint32_t*)(0x3FF00040);
-    u = u & ~(1 << 4); 
-    *(volatile uint32_t*)(0x3FF00040) = u;
-    for(volatile int i = 0; i < 1000000; i++);
+    while(((*(volatile uint32_t*)(0x3FF00040) >> 5) & 1U) == 0)
+    {
+        //wait for done bit to be set
+    }
 
-    for(volatile int i = 0; i < 1000000; i++);
-    u = *(volatile uint32_t*)(0x3FF00040);
-    u = u & ~(1 << 3); 
-    *(volatile uint32_t*)(0x3FF00040) = u;
-    
-    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);
-    *(uint32_t*)(0x3FF10000 + (132*4)) = 0x40;
-    for(volatile int i = 0; i < 1000000; i++);
-     u = *(volatile uint32_t*)(0x3FF00040);
-    u = u | (1 << 3); 
-    *(volatile uint32_t*)(0x3FF00040) = u;
+    // real addr 0x18000 is in page 1
+    mmuTable[192] = 0x001;
 
-    u = *(volatile uint32_t*)(0x3FF00040);
-    u = u & ~(1 << 4); 
-    *(volatile uint32_t*)(0x3FF00040) = u;
-    for(volatile int i = 0; i < 1000000; i++);
+    printf("Val: %x\r\n", *(volatile uint32_t*)0x40808000);
 
-    for(volatile int i = 0; i < 1000000; i++);
-     u = *(volatile uint32_t*)(0x3FF00040);
-    u = u & ~(1 << 3); 
-    *(volatile uint32_t*)(0x3FF00040) = u;
-    for(volatile int i = 0; i < 1000000; i++);
-    printf("Val: %d\r\n", *(uint32_t*)0x4044048C);
-    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %d\r\n", *(uint32_t*)(0x3FF10000 + (132*4)) & 0xFFFFFF);
+    printf("MMU entry for VAddr2 for PID 0/1 for the PRO_CPU: %u\r\n", *(uint32_t*)(0x3FF10000 + (192*4)) & 0xFFFFFF);
 
     dsOS::createTask(&testFunc1, 2048);
     dsOS::createTask(&testFunc2, 2048);
