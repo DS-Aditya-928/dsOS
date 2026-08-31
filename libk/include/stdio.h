@@ -63,11 +63,28 @@ extern "C"
     int snprintf(char* restrict s, size_t n, const char* restrict format, ...);
     int sprintf(char* restrict s, const char* restrict format, ...);
     int sscanf(const char* restrict s, const char* restrict format, ...);
+
     int vfprintf(FILE* restrict stream, const char* restrict format, va_list arg);
     int vfscanf(FILE* restrict stream, const char* restrict format, va_list arg);
+
     int vprintf(const char* restrict format, va_list arg);
     int vscanf(const char* restrict format, va_list arg);
+
     int vsnprintf(char* restrict s, size_t n, const char* restrict format, va_list arg);
+    int vsprintf(char* restrict s, const char* restrict format, va_list arg);
+    int vsscanf(const char* restrict s, const char* restrict format, va_list arg);
+
+    int fgetc(FILE* stream);
+    char* fgets(char* restrict s, int n, FILE* restrict stream);
+    int fputc(int c, FILE* stream);
+    int fputs(const char* restrict s, FILE* restrict stream);
+    int getc(FILE* stream);
+    int getchar(void);
+    char* gets(char* s);
+    int putc(int c, FILE* stream);
+    int putchar(int c);
+    int puts(const char* s);
+    int ungetc(int c, FILE* stream);
 
 #ifdef __cplusplus
 }
