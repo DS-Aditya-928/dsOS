@@ -7,4 +7,5 @@
 *.txt
 *.map
 build
+__reference
 .vscode/
