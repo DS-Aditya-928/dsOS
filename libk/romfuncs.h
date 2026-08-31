@@ -33,3 +33,5 @@
 #define addr_STRSPN 0x4000c648
 #define addr_STRSTR 0x4000c674
 #define addr_MEMSET 0x4000c44c
+
+#define addr_ETS_PRINTF 0x40007d54
