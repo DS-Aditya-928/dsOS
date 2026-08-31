@@ -245,7 +245,6 @@ int printf(const char* restrict format, ...)
     va_list args;
     va_start(args, format);
 
-    char buffer[256];
     int chars_to_write = vfprintf(stdout, format, args);
 
     va_end(args);
