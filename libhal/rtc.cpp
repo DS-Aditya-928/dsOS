@@ -8,9 +8,9 @@
 
 void RTC::disableBootProtection()
 {
-    *(int*)(RTC_BASE + RTC_WP_OFF) = 1;
+    *(int*)(RTC_BASE + RTC_WP_OFF) = MAGICNUM;
     unsigned int status = *(unsigned int*)(RTC_BASE + RTC_CNTL_WDTCONFIG0_OFF);
     status &= ~(1U << 10);
     *(unsigned int*)(RTC_BASE + RTC_CNTL_WDTCONFIG0_OFF) = status;
-    *(int*)(RTC_BASE + RTC_WP_OFF) = MAGICNUM;
+    *(int*)(RTC_BASE + RTC_WP_OFF) = 1;
 }
