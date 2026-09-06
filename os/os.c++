@@ -2,7 +2,8 @@
 #include <string.h>
 #include "clock.h"
 #include "uart.h"
-#include "wdt.h"
+#include "timers.h"
+#include "rtc.h"
 #include "mmu.h"
 #include "gpio.h"
 #include "os.h"
@@ -100,8 +101,8 @@ void testFunc3(void)
 
 extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 {  
-    WDTRTC::disableBootProtection();
-    WDT0::disableBootProtection();
+    RTC::disableBootProtection();
+    TIMG0::disableBootProtection();
     for(volatile int i = 0; i < 1000000; i++);
     CLOCK_CNTL::init();
     UART0::init(115200);
