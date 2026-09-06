@@ -113,20 +113,32 @@ extern "C" void  __attribute__((noreturn)) call_start_cpu0(void)
 
     printf("Kernel loaded!\r\n");
     printf("Compiled on %s at %s.\r\n", __DATE__, __TIME__);
-    char x[10];
+    char x[10] = "";
     printf("itoa test: %s\r\n", itoa(12345, x, 10));
     printf("itoa test: %s\r\n", itoa(-12345, x, 10));
     printf("itoa test: %s\r\n", itoa(0xABCD, x, 16));
-    GPIO::setMode(2, 1);
+    GPIO::setMode(25, 1);
 
     dsOS::createTask(&testFunc1, 2048);
     dsOS::createTask(&testFunc2, 2048);
     dsOS::createTask(&testFunc3, 2048);
 
-    dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
+    printf("lmao %d", 90);
+    volatile int breaker = 91/0;
+    
+    //dsOS::startScheduler();//flag as infinite non return blocking? shouldnt return bcos control is handed over solely to any tasks.
     
     while(true)
     { 
-
+        uint32_t ccount;
+    __asm__ __volatile__ (
+        "rsr.ccount %0 \n" 
+        : "=r" (ccount)      
+    );
+        printf("asasgs%d\n\r", ccount);
+        GPIO::write(25, 0);
+        for(volatile int i = 0; i < 1000000; i++);
+        GPIO::write(25, 1);
+        for(volatile int i = 0; i < 1000000; i++);
     }
 }
