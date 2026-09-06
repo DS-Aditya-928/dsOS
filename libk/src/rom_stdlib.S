@@ -10,6 +10,7 @@
         j       rom_call_stub
 .endm
         
+BIND_ROM_FUNC utoa, addr_UTOA
 BIND_ROM_FUNC itoa, addr_ITOA 
 BIND_ROM_FUNC strlen, addr_STRLEN
 BIND_ROM_FUNC abort, addr_ABORT

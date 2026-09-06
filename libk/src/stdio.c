@@ -14,6 +14,18 @@
         count++;                                     \
     } while (0)
 
+static char* vsnprintf_str;
+static size_t vsnprintf_size;
+static int vsnprintf_count;
+static void vsnprintf_pushChar(char c)
+{
+    if (vsnprintf_str != NULL && (size_t)vsnprintf_count < vsnprintf_size - 1)
+    {
+        vsnprintf_str[vsnprintf_count] = c;
+    }
+    vsnprintf_count++;
+}
+
 int vsnprintf(char* str, size_t size, const char* format, va_list arg)
 {
     int count = 0;
@@ -23,81 +35,14 @@ int vsnprintf(char* str, size_t size, const char* format, va_list arg)
         return -1;
     }
 
-    while (*format)
-    {
-        if (*format != '%')
-        {
-            APPEND_CHAR(*format);
-            format++;
-            continue;
-        }
+    FILE tempStream = { .pushChar = vsnprintf_pushChar, .write = NULL };
+    vsnprintf_str = str;
+    vsnprintf_size = size;
+    vsnprintf_count = 0;
 
-        format++;
-        switch (*format)
-        {
-        case 'c':
-        {
-            char c = (char)va_arg(arg, int);
-            APPEND_CHAR(c);
-            break;
-        }
-        case 's':
-        {
-            const char* s = va_arg(arg, const char*);
-            if (!s)
-            {
-                s = "(null)";
-            }
-            while (*s)
-            {
-                APPEND_CHAR(*s);
-                s++;
-            }
-            break;
-        }
-        case 'd':
-        {
-            int val = va_arg(arg, int);
-            char num_buf[32];
-            itoa(val, num_buf, 10);
-            char* n = num_buf;
-            while (*n)
-            {
-                APPEND_CHAR(*n++);
-            }
-            break;
-        }
-        case 'x':
-        {
-            int val = va_arg(arg, int);
-            char num_buf[32];
-            itoa(val, num_buf, 16);
-            char* n = num_buf;
-            while (*n)
-            {
-                APPEND_CHAR(*n++);
-            }
-            break;
-        }
-        case '%':
-        {
-            APPEND_CHAR('%');
-            break;
-        }
-        default:
-        {
-            // Unrecognized specifier, treat it as a literal character
-            APPEND_CHAR('%');
-            APPEND_CHAR(*format);
-            break;
-        }
-        }
+    vfprintf(&tempStream, format, arg);
 
-        if (*format)
-        {
-            format++;
-        }
-    }
+    vfprintf(stdout, format, arg);
 
     if (size > 0)
     {
@@ -180,6 +125,18 @@ int vfprintf(FILE* restrict stream, const char* restrict format, va_list arg)
             int val = va_arg(arg, int);
             char num_buf[32];
             itoa(val, num_buf, 16);
+            char* n = num_buf;
+            while (*n)
+            {
+                PUSH_CHAR(*n++);
+            }
+            break;
+        }
+        case 'u':
+        {
+            unsigned int val = va_arg(arg, unsigned int);
+            char num_buf[32];
+            utoa(val, num_buf, 10);
             char* n = num_buf;
             while (*n)
             {
